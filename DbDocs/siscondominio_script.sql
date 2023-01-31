@@ -16,10 +16,10 @@ CREATE TABLE public.seg_bitacora (
 ALTER SEQUENCE public.seg_bitacora_bit_id_seq OWNED BY public.seg_bitacora.bit_id;
 
 CREATE TABLE public.fin_tipo_servicio (
-                tis_id INTEGER NOT NULL,
-                tis_nombre VARCHAR NOT NULL,
-                tis_descripcion VARCHAR NOT NULL,
-                CONSTRAINT fin_tipo_servicio_pk PRIMARY KEY (tis_id)
+                tse_id INTEGER NOT NULL,
+                tse_nombre VARCHAR NOT NULL,
+                tse_descripcion VARCHAR NOT NULL,
+                CONSTRAINT fin_tipo_servicio_pk PRIMARY KEY (tse_id)
 );
 
 
@@ -31,7 +31,7 @@ CREATE TABLE public.fin_gastos (
                 gas_pago NUMERIC(10,3) NOT NULL,
                 gas_fecha DATE NOT NULL,
                 gas_recibo VARCHAR NOT NULL,
-                tis_id INTEGER NOT NULL,
+                tse_id INTEGER NOT NULL,
                 CONSTRAINT fin_gastos_pk PRIMARY KEY (gas_id)
 );
 
@@ -54,13 +54,13 @@ ALTER SEQUENCE public.fin_pago_abo_id_seq OWNED BY public.fin_pago.pag_id;
 CREATE SEQUENCE public.fin_tipo_pago_pag_id_seq;
 
 CREATE TABLE public.fin_tipo_deuda (
-                pagt_id INTEGER NOT NULL DEFAULT nextval('public.fin_tipo_pago_pag_id_seq'),
-                pagt_nombre VARCHAR NOT NULL,
-                CONSTRAINT fin_tipo_deuda_pk PRIMARY KEY (pagt_id)
+                tde_id INTEGER NOT NULL DEFAULT nextval('public.fin_tipo_pago_pag_id_seq'),
+                tde_nombre VARCHAR NOT NULL,
+                CONSTRAINT fin_tipo_deuda_pk PRIMARY KEY (tde_id)
 );
 
 
-ALTER SEQUENCE public.fin_tipo_pago_pag_id_seq OWNED BY public.fin_tipo_deuda.pagt_id;
+ALTER SEQUENCE public.fin_tipo_pago_pag_id_seq OWNED BY public.fin_tipo_deuda.tde_id;
 
 CREATE SEQUENCE public.fin_monto_val_id_seq;
 
@@ -69,7 +69,7 @@ CREATE TABLE public.fin_monto (
                 mon_valor NUMERIC(10,3) NOT NULL,
                 mon_fecha_asignacion DATE NOT NULL,
                 mon_fecha_fin DATE,
-                pagt_id INTEGER NOT NULL,
+                tde_id INTEGER NOT NULL,
                 CONSTRAINT fin_monto_pk PRIMARY KEY (mon_id)
 );
 
@@ -79,13 +79,13 @@ ALTER SEQUENCE public.fin_monto_val_id_seq OWNED BY public.fin_monto.mon_id;
 CREATE SEQUENCE public.ctr_tipo_anuncio_tip_id_seq;
 
 CREATE TABLE public.ctr_tipo_anuncio (
-                tip_id INTEGER NOT NULL DEFAULT nextval('public.ctr_tipo_anuncio_tip_id_seq'),
-                tip_nombre VARCHAR(60) NOT NULL,
-                CONSTRAINT ctr_tipo_anuncio_pk PRIMARY KEY (tip_id)
+                tan_id INTEGER NOT NULL DEFAULT nextval('public.ctr_tipo_anuncio_tip_id_seq'),
+                tan_nombre VARCHAR(60) NOT NULL,
+                CONSTRAINT ctr_tipo_anuncio_pk PRIMARY KEY (tan_id)
 );
 
 
-ALTER SEQUENCE public.ctr_tipo_anuncio_tip_id_seq OWNED BY public.ctr_tipo_anuncio.tip_id;
+ALTER SEQUENCE public.ctr_tipo_anuncio_tip_id_seq OWNED BY public.ctr_tipo_anuncio.tan_id;
 
 CREATE SEQUENCE public.ctr_lugar_lug_id_seq_1;
 
@@ -143,9 +143,8 @@ CREATE TABLE public.fin_deuda (
                 deu_fecha_corte DATE NOT NULL,
                 deu_saldo NUMERIC(10,3) NOT NULL,
                 deu_cancelado BOOLEAN NOT NULL,
-                usu_cedula VARCHAR(10) NOT NULL,
-                ctr_usuario_usu_cedula VARCHAR(10) NOT NULL,
                 mon_id INTEGER NOT NULL,
+                usu_cedula VARCHAR(10) NOT NULL,
                 CONSTRAINT fin_deuda_pk PRIMARY KEY (deu_id)
 );
 
@@ -169,9 +168,9 @@ CREATE SEQUENCE public.ctr_reunion_reu_id_seq;
 CREATE TABLE public.ctr_reunion (
                 reu_id INTEGER NOT NULL DEFAULT nextval('public.ctr_reunion_reu_id_seq'),
                 usu_cedula VARCHAR(10) NOT NULL,
-                lug_id INTEGER NOT NULL,
                 reu_fecha DATE NOT NULL,
                 reu_estado BOOLEAN NOT NULL,
+                lug_id INTEGER NOT NULL,
                 CONSTRAINT ctr_reunion_pk PRIMARY KEY (reu_id)
 );
 
@@ -183,12 +182,12 @@ CREATE SEQUENCE public.ctr_anuncio_anc_id_seq;
 CREATE TABLE public.ctr_anuncio (
                 anc_id INTEGER NOT NULL DEFAULT nextval('public.ctr_anuncio_anc_id_seq'),
                 usu_cedula VARCHAR(10) NOT NULL,
-                tip_id INTEGER NOT NULL,
                 anc_titulo VARCHAR(50) NOT NULL,
                 anc_descripcion VARCHAR(200) NOT NULL,
                 anc_fecha_publicacion DATE NOT NULL,
                 anc_prioridad VARCHAR(10) NOT NULL,
                 anc_estado BOOLEAN NOT NULL,
+                tan_id INTEGER NOT NULL,
                 CONSTRAINT ctr_anuncio_pk PRIMARY KEY (anc_id)
 );
 
@@ -232,8 +231,8 @@ CREATE TABLE public.ctr_asignacion (
 ALTER SEQUENCE public.ctr_asignacion_rol_id_seq OWNED BY public.ctr_asignacion.asg_id;
 
 ALTER TABLE public.fin_gastos ADD CONSTRAINT fin_tipo_servicio_fin_gastos_fk
-FOREIGN KEY (tis_id)
-REFERENCES public.fin_tipo_servicio (tis_id)
+FOREIGN KEY (tse_id)
+REFERENCES public.fin_tipo_servicio (tse_id)
 ON DELETE NO ACTION
 ON UPDATE CASCADE
 NOT DEFERRABLE;
@@ -246,8 +245,8 @@ ON UPDATE CASCADE
 NOT DEFERRABLE;
 
 ALTER TABLE public.fin_monto ADD CONSTRAINT fin_tipo_pago_fin_monto_fk
-FOREIGN KEY (pagt_id)
-REFERENCES public.fin_tipo_deuda (pagt_id)
+FOREIGN KEY (tde_id)
+REFERENCES public.fin_tipo_deuda (tde_id)
 ON DELETE NO ACTION
 ON UPDATE CASCADE
 NOT DEFERRABLE;
@@ -259,9 +258,9 @@ ON DELETE NO ACTION
 ON UPDATE CASCADE
 NOT DEFERRABLE;
 
-ALTER TABLE public.ctr_anuncio ADD CONSTRAINT ctr_tipo_ctr_anuncio_fk
-FOREIGN KEY (tip_id)
-REFERENCES public.ctr_tipo_anuncio (tip_id)
+ALTER TABLE public.ctr_anuncio ADD CONSTRAINT ctr_tipo_anuncio_ctr_anuncio_fk
+FOREIGN KEY (tan_id)
+REFERENCES public.ctr_tipo_anuncio (tan_id)
 ON DELETE NO ACTION
 ON UPDATE CASCADE
 NOT DEFERRABLE;
@@ -329,15 +328,8 @@ ON DELETE NO ACTION
 ON UPDATE CASCADE
 NOT DEFERRABLE;
 
-ALTER TABLE public.fin_deuda ADD CONSTRAINT ctr_usuario_fin_alicuota_fk
+ALTER TABLE public.fin_deuda ADD CONSTRAINT ctr_usuario_fin_deuda_fk
 FOREIGN KEY (usu_cedula)
-REFERENCES public.ctr_usuario (usu_cedula)
-ON DELETE NO ACTION
-ON UPDATE CASCADE
-NOT DEFERRABLE;
-
-ALTER TABLE public.fin_deuda ADD CONSTRAINT ctr_usuario_fin_pago_fk
-FOREIGN KEY (ctr_usuario_usu_cedula)
 REFERENCES public.ctr_usuario (usu_cedula)
 ON DELETE NO ACTION
 ON UPDATE CASCADE
