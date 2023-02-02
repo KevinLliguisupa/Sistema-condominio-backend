@@ -1,12 +1,11 @@
 package com.restapi.siscondominio.financiero.presentation.controllers;
 
-import com.restapi.siscondominio.financiero.business.dto.FinMontoDTO;
 import com.restapi.siscondominio.financiero.business.services.FinMontoService;
-import com.restapi.siscondominio.financiero.business.vo.FinMontoQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinMontoUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinMontoVO;
+import com.restapi.siscondominio.financiero.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,35 +14,63 @@ import javax.validation.constraints.NotNull;
 
 @Validated
 @RestController
-@RequestMapping("/financiero/monto")
+@RequestMapping("/financiero/cobros/montos")
 public class FinMontoController {
 
     @Autowired
     private FinMontoService finMontoService;
 
-    @PostMapping
-    public String save(@Valid @RequestBody FinMontoVO vO) {
-        return finMontoService.save(vO).toString();
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        finMontoService.delete(id);
-    }
-
-    @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") Long id,
-                       @Valid @RequestBody FinMontoUpdateVO vO) {
-        finMontoService.update(id, vO);
+    @GetMapping
+    public ResponseEntity<Object> getAll(
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10")    Integer size,
+            @RequestParam(required = false, defaultValue = "0")     Integer page) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getAll(pagination, size, page));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{id}")
-    public FinMontoDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
-        return finMontoService.getById(id);
+    public ResponseEntity<Object> getById(@Valid @NotNull @PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getById(id));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(),
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @GetMapping
-    public Page<FinMontoDTO> query(@Valid FinMontoQueryVO vO) {
-        return finMontoService.query(vO);
+    @GetMapping("/activos")
+    public ResponseEntity<Object> getActivos() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getActivos());
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/activos/{id}")
+    public ResponseEntity<Object> getActivosByTipo(@Valid @NotNull @PathVariable("id") Long tdeId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getActivosByTipo(tdeId));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> save(@Valid @RequestBody FinMontoVO requestBody) {
+        try {
+            return ResponseHandler.generateResponse("¡Valor creado correctamente!",
+                    HttpStatus.CREATED, finMontoService.save(requestBody));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Error no fue posible crear el recurso!",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

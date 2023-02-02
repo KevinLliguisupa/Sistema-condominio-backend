@@ -22,6 +22,7 @@ public class CtrUsuarioService {
     public String save(CtrUsuarioVO vO) {
         CtrUsuario bean = new CtrUsuario();
         BeanUtils.copyProperties(vO, bean);
+        bean.setUsuEstado(true);
         bean = ctrUsuarioRepository.save(bean);
         return bean.getUsuCedula();
     }

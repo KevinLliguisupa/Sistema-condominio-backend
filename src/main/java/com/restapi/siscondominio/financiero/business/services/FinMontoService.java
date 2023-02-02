@@ -1,39 +1,35 @@
 package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.financiero.business.dto.FinMontoDTO;
-import com.restapi.siscondominio.financiero.business.vo.FinMontoQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinMontoUpdateVO;
+import com.restapi.siscondominio.financiero.business.dto.FinTipoDeudaDTO;
+import com.restapi.siscondominio.financiero.business.speficications.FinMontoSpecification;
 import com.restapi.siscondominio.financiero.business.vo.FinMontoVO;
 import com.restapi.siscondominio.financiero.persistence.entities.FinMonto;
+import com.restapi.siscondominio.financiero.persistence.entities.FinTipoDeuda;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinMontoRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-public class FinMontoService {
+public class FinMontoService extends Servicio<FinMonto, FinMontoDTO> {
 
     @Autowired
     private FinMontoRepository finMontoRepository;
 
-    public Long save(FinMontoVO vO) {
-        FinMonto bean = new FinMonto();
-        BeanUtils.copyProperties(vO, bean);
-        bean = finMontoRepository.save(bean);
-        return bean.getMonId();
-    }
-
-    public void delete(Long id) {
-        finMontoRepository.deleteById(id);
-    }
-
-    public void update(Long id, FinMontoUpdateVO vO) {
-        FinMonto bean = requireOne(id);
-        BeanUtils.copyProperties(vO, bean);
-        finMontoRepository.save(bean);
+    public Page<FinMontoDTO> getAll(@NotNull Boolean pagination, Integer size, Integer page) {
+        Sort sorter = Sort.by("monFechaAsignacion").descending();
+        if (pagination) {
+            return toPageDTO(finMontoRepository.findAll(PageRequest.of(page, size, sorter)));
+        }
+        return toPageDTO(finMontoRepository.findAll(sorter));
     }
 
     public FinMontoDTO getById(Long id) {
@@ -41,18 +37,63 @@ public class FinMontoService {
         return toDTO(original);
     }
 
-    public Page<FinMontoDTO> query(FinMontoQueryVO vO) {
-        throw new UnsupportedOperationException();
+    public FinMontoDTO save(FinMontoVO requestBody) {
+        FinMonto bean = new FinMonto();
+        BeanUtils.copyProperties(requestBody, bean);
+        //Agregar fecha asignacion a la entitie
+        bean.setMonFechaAsignacion(LocalDate.now());
+
+        //Cambio de id a objeto
+        FinTipoDeuda tipoDeuda = new FinTipoDeuda();
+        tipoDeuda.setTdeId(requestBody.getTdeId());
+        bean.setTipoDeuda(tipoDeuda);
+
+        bean = finMontoRepository.save(bean);
+        cambiarUltimoValor();
+        return toDTO(bean);
     }
 
-    private FinMontoDTO toDTO(FinMonto original) {
-        FinMontoDTO bean = new FinMontoDTO();
-        BeanUtils.copyProperties(original, bean);
-        return bean;
+    private void cambiarUltimoValor() {
+
     }
 
     private FinMonto requireOne(Long id) {
         return finMontoRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+    }
+
+    public FinMontoDTO toDTO(FinMonto original) {
+        FinMontoDTO bean = null;
+        try {
+            bean = new FinMontoDTO();
+            BeanUtils.copyProperties(original, bean);
+            bean.setTipoDeuda(toFinTipoDeudaDTO(original.getTipoDeuda()));
+        } catch (Exception e) {
+            System.out.println("Fallo conversion de Entidad a DTO: " + e);
+        }
+        return bean;
+    }
+
+    private FinTipoDeudaDTO toFinTipoDeudaDTO(FinTipoDeuda original) {
+        FinTipoDeudaDTO bean = null;
+        try {
+            bean = new FinTipoDeudaDTO();
+            BeanUtils.copyProperties(original, bean);
+        } catch (Exception e) {
+            System.out.println("Fallo conversion de Entidad a DTO: " + e);
+        }
+        return bean;
+    }
+
+
+    public List<FinMontoDTO> getActivos() {
+        Specification<FinMonto> isActive = Specification.where(FinMontoSpecification.isActive());
+        return toListDTO(finMontoRepository.findAll(isActive));
+    }
+
+    public FinMontoDTO getActivosByTipo(Long tdeId) {
+        Specification<FinMonto> activeAndTipo = Specification.where(FinMontoSpecification.isActive())
+                .and(FinMontoSpecification.hasTipo(tdeId));
+        return toDTO(finMontoRepository.findAll(activeAndTipo).get(0));
     }
 }
