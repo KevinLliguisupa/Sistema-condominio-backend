@@ -1,9 +1,10 @@
 package com.restapi.siscondominio.financiero.persistence.entities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -11,28 +12,36 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "fin_gastos")
-public class FinGasto implements Serializable {
+public class FinGasto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "gas_id", nullable = false)
     private Long gasId;
 
-    
-    @Column(name = "gas_ced_tesorero", nullable = false)
-    private String gasCedTesorero;
-
-    @Column(name = "gas_pago", nullable = false, precision = 10, scale = 3)
-    private BigDecimal gasPago;
-
-    @Column(name = "gas_fecha", nullable = false)
-    private LocalDate gasFecha;
-
-    
-    @Column(name = "gas_recibo", nullable = false)
-    private String gasRecibo;
-
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tse_id", nullable = false)
     private FinTipoServicio tse;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "inc_id", nullable = false)
+    private FinIncidencia inc;
+
+    @NotNull
+    @Column(name = "gas_ced_tesorero", nullable = false)
+    private String gasCedTesorero;
+
+    @NotNull
+    @Column(name = "gas_pago", nullable = false, precision = 10, scale = 3)
+    private BigDecimal gasPago;
+
+    @NotNull
+    @Column(name = "gas_fecha", nullable = false)
+    private LocalDate gasFecha;
+
+    @NotNull
+    @Column(name = "gas_recibo", nullable = false)
+    private String gasRecibo;
 
 }
