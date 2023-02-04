@@ -4,6 +4,7 @@ package com.restapi.siscondominio.financiero.business.vo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data

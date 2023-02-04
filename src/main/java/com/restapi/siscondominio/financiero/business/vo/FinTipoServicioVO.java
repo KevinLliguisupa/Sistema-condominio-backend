@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class FinTipoServicioVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "tseId can not null")
-    private Long tseId;
+    //@NotNull(message = "tseId can not null")
+    //private Long tseId;
 
     @NotNull(message = "tseNombre can not null")
     private String tseNombre;

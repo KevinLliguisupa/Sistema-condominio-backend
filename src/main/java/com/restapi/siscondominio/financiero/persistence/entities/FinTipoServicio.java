@@ -26,7 +26,7 @@ public class FinTipoServicio {
     @Column(name = "tse_descripcion", nullable = false)
     private String tseDescripcion;
 
-    @OneToMany(mappedBy = "tse")
+    @OneToMany(mappedBy = "tseId")
     private Set<FinGasto> finGastos = new LinkedHashSet<>();
 
 }
