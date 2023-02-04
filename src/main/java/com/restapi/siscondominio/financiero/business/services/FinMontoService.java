@@ -10,7 +10,9 @@ import com.restapi.siscondominio.financiero.persistence.repositories.FinMontoRep
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,15 @@ public class FinMontoService extends Servicio<FinMonto, FinMontoDTO> {
     @Autowired
     private FinMontoRepository finMontoRepository;
 
-    public Page<FinMontoDTO> getAll(@NotNull Boolean pagination, Integer size, Integer page) {
+    public Page<FinMontoDTO> getAll(@NotNull Integer size, Integer page) {
         Sort sorter = Sort.by("monFechaAsignacion").descending();
-        if (pagination) {
-            return toPageDTO(finMontoRepository.findAll(PageRequest.of(page, size, sorter)));
-        }
-        return toPageDTO(finMontoRepository.findAll(sorter));
+        return toPageDTO(finMontoRepository.findAll(PageRequest.of(page, size, sorter)));
+
+    }
+
+    public List<FinMontoDTO> getAll() {
+        Sort sorter = Sort.by("monFechaAsignacion").descending();
+        return toListDTO(finMontoRepository.findAll(sorter));
     }
 
     public FinMontoDTO getById(Long id) {

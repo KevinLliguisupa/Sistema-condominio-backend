@@ -12,20 +12,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-public class FinTipoDeudaService extends Servicio<FinTipoDeuda, FinTipoDeudaDTO>  {
+public class FinTipoDeudaService extends Servicio<FinTipoDeuda, FinTipoDeudaDTO> {
 
     @Autowired
     private FinTipoDeudaRepository finTipoDeudaRepository;
 
-    public Page<FinTipoDeudaDTO> getAll(@NotNull Boolean pagination, Integer size, Integer page) {
+    public Page<FinTipoDeudaDTO> getAll(@NotNull Integer size, Integer page) {
         Sort sorter = Sort.by("tdeNombre");
-        if (pagination) {
-            return toPageDTO(finTipoDeudaRepository.findAll(PageRequest.of(page, size, sorter)));
-        }
-        return toPageDTO(finTipoDeudaRepository.findAll(sorter));
+        return toPageDTO(finTipoDeudaRepository.findAll(PageRequest.of(page, size, sorter)));
+    }
+
+    public List<FinTipoDeudaDTO> getAll() {
+        Sort sorter = Sort.by("tdeNombre");
+        return toListDTO(finTipoDeudaRepository.findAll(sorter));
     }
 
     public FinTipoDeudaDTO getById(Long id) {
@@ -51,6 +54,7 @@ public class FinTipoDeudaService extends Servicio<FinTipoDeuda, FinTipoDeudaDTO>
         return finTipoDeudaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Recurso no encontrado: " + id));
     }
+
     public FinTipoDeudaDTO toDTO(FinTipoDeuda original) {
         FinTipoDeudaDTO bean = null;
         try {

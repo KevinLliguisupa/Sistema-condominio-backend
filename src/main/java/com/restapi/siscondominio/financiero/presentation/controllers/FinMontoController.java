@@ -26,7 +26,11 @@ public class FinMontoController {
             @RequestParam(required = false, defaultValue = "10")    Integer size,
             @RequestParam(required = false, defaultValue = "0")     Integer page) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getAll(pagination, size, page));
+            if(pagination){
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getAll(size, page));
+            } else {
+            return ResponseEntity.status(HttpStatus.OK).body(finMontoService.getAll());
+            }
         } catch (Exception e) {
             return ResponseHandler.generateResponse("¡Información no encontrada!",
                     HttpStatus.NOT_FOUND);
