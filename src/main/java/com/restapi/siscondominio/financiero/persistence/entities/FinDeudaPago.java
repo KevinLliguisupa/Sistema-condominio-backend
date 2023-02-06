@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -23,4 +24,6 @@ public class FinDeudaPago implements Serializable {
     @JoinColumn(name = "pag_id", nullable = false)
     private FinPago pag;
 
+    @Column(name = "dep_valor_pagado", precision = 10, scale = 3)
+    private BigDecimal depValorPagado;
 }

@@ -19,8 +19,8 @@ public class Servicio<ENTITIE, DTO> {
 
     public List<DTO> toListDTO(List<ENTITIE> original) {
         List<DTO> converted = new ArrayList<>();
-        for (ENTITIE monto : original) {
-            converted.add(toDTO(monto));
+        for (ENTITIE data : original) {
+            converted.add(toDTO(data));
         }
         return converted;
     }

@@ -32,7 +32,7 @@ public class FinMonto implements Serializable {
     @JoinColumn(name = "tde_id", nullable = false)
     private FinTipoDeuda tipoDeuda;
 
-    @OneToMany(mappedBy = "mon")
+    @OneToMany(mappedBy = "monto")
     private Set<FinDeuda> finDeudas = new LinkedHashSet<>();
 
 }

@@ -6,9 +6,10 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-public class FinDeudaDTO implements Serializable {
+public class FinDeudaInfoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long deuId;
 
@@ -22,5 +23,6 @@ public class FinDeudaDTO implements Serializable {
 
     private FinMontoDTO monto;
 
+    List<FinDeudaPagoDTO> pagos;
 
 }

@@ -2,11 +2,11 @@ package com.restapi.siscondominio.financiero.presentation.controllers;
 
 import com.restapi.siscondominio.financiero.business.dto.FinPagoDTO;
 import com.restapi.siscondominio.financiero.business.services.FinPagoService;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinPagoVO;
+import com.restapi.siscondominio.financiero.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,35 +15,36 @@ import javax.validation.constraints.NotNull;
 
 @Validated
 @RestController
-@RequestMapping("/financiero/pago")
+@RequestMapping("/financiero/cobros/pagos")
 public class FinPagoController {
 
     @Autowired
     private FinPagoService finPagoService;
+
+    @GetMapping
+    public ResponseEntity<Object> getAll(
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getAll(size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getAll());
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 
     @PostMapping
     public String save(@Valid @RequestBody FinPagoVO vO) {
         return finPagoService.save(vO).toString();
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        finPagoService.delete(id);
-    }
-
-    @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") Long id,
-                       @Valid @RequestBody FinPagoUpdateVO vO) {
-        finPagoService.update(id, vO);
-    }
-
     @GetMapping("/{id}")
     public FinPagoDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
         return finPagoService.getById(id);
-    }
-
-    @GetMapping
-    public Page<FinPagoDTO> query(@Valid FinPagoQueryVO vO) {
-        return finPagoService.query(vO);
     }
 }

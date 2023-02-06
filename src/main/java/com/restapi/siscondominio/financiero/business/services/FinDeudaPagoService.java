@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 
 @Service
-public class FinDeudaPagoService {
+public class FinDeudaPagoService extends Servicio<FinDeudaPago, FinDeudaPagoDTO>{
 
     @Autowired
     private FinDeudaPagoRepository finDeudaPagoRepository;
+    @Autowired
+    private FinPagoService finPagoService;
 
     public Long save(FinDeudaPagoVO vO) {
         FinDeudaPago bean = new FinDeudaPago();
@@ -45,9 +47,16 @@ public class FinDeudaPagoService {
         throw new UnsupportedOperationException();
     }
 
-    private FinDeudaPagoDTO toDTO(FinDeudaPago original) {
+//    public FinDeudaPagoDTO toDTO(FinDeudaPago original) {
+//        FinDeudaPagoDTO bean = new FinDeudaPagoDTO();
+//        BeanUtils.copyProperties(original, bean);
+//        return bean;
+//    }
+
+    public FinDeudaPagoDTO toDTO(FinDeudaPago original) {
         FinDeudaPagoDTO bean = new FinDeudaPagoDTO();
         BeanUtils.copyProperties(original, bean);
+        bean.setPago(finPagoService.toDTO(original.getPag()));
         return bean;
     }
 

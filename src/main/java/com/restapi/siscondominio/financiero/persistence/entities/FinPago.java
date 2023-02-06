@@ -1,13 +1,14 @@
 package com.restapi.siscondominio.financiero.persistence.entities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,6 +31,6 @@ public class FinPago implements Serializable {
     private String cedTesorero;
 
     @OneToMany(mappedBy = "pag")
-    private Set<FinDeudaPago> finDeudaPagos = new LinkedHashSet<>();
+    private List<FinDeudaPago> finDeudaPagos = new ArrayList<>();
 
 }
