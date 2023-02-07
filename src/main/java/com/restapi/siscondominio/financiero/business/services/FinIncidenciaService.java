@@ -2,10 +2,7 @@ package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.financiero.business.dto.FinIncidenciaDTO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaSolucionarVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaUpdateVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaVO;
+import com.restapi.siscondominio.financiero.business.vo.*;
 import com.restapi.siscondominio.financiero.persistence.entities.FinGasto;
 import com.restapi.siscondominio.financiero.persistence.entities.FinIncidencia;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinIncidenciaRepository;
@@ -56,6 +53,18 @@ public class FinIncidenciaService {
         }
 
     }
+
+    public void updateIndicenSolution(Long id, FinIncidenciaSolucionadaUpdateVO vO) {
+        try{
+            FinIncidencia bean = requireOne(id);
+            BeanUtils.copyProperties(vO, bean);
+            finIncidenciaRepository.save(bean);
+        }catch(Exception e){
+
+        }
+
+    }
+
 
     public void solution(Long id, FinIncidenciaSolucionarVO vO){
         try{

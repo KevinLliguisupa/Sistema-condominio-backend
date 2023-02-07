@@ -4,6 +4,7 @@ package com.restapi.siscondominio.financiero.business.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 public class FinDeudaPagoDTO implements Serializable {
@@ -13,5 +14,6 @@ public class FinDeudaPagoDTO implements Serializable {
     private Long deuId;
 
     private Long pagId;
+    private BigDecimal depValorPagado;
 
 }

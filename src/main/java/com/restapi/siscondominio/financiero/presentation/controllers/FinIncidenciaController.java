@@ -2,10 +2,7 @@ package com.restapi.siscondominio.financiero.presentation.controllers;
 
 import com.restapi.siscondominio.financiero.business.dto.FinIncidenciaDTO;
 import com.restapi.siscondominio.financiero.business.services.FinIncidenciaService;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaSolucionarVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaUpdateVO;
-import com.restapi.siscondominio.financiero.business.vo.FinIncidenciaVO;
+import com.restapi.siscondominio.financiero.business.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +41,12 @@ public class FinIncidenciaController {
                        @Valid @RequestBody FinIncidenciaSolucionarVO vO) {
         finIncidenciaService.solution(id, vO);
     }
+    @PutMapping("/solucionada/{id}")
+    public void solution(@Valid @NotNull @PathVariable("id") Long id,
+                         @Valid @RequestBody FinIncidenciaSolucionadaUpdateVO vO) {
+        finIncidenciaService.updateIndicenSolution(id, vO);
+    }
+
 
     @GetMapping("/{id}")
     public FinIncidenciaDTO getById(@Valid @NotNull @PathVariable("id") Long id) {

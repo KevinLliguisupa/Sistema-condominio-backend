@@ -9,14 +9,7 @@ import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class FinIncidenciaUpdateVO implements Serializable {
+public class FinIncidenciaSolucionadaUpdateVO implements  Serializable{
     private static final long serialVersionUID = 1L;
-
-    @NotNull(message = "incDescripcion can not null")
-    private String incDescripcion;
-
-    @NotNull(message = "incEvidenciaIndicencia can not null")
-    private String incEvidenciaIndicencia;
-
-
+    private String incEvidenciaSolucion;
 }
