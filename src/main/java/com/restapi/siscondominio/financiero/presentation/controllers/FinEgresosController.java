@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 @Validated
 @RestController
-@RequestMapping("/financiero/egresodinero")
+@RequestMapping("/financiero/egresosincidenciasdinero")
 public class FinEgresosController {
     @Autowired
     private FinEgresosDineroService finEgresosDineroService;
