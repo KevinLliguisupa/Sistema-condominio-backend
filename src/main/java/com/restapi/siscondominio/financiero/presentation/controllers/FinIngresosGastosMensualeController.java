@@ -30,17 +30,25 @@ public class FinIngresosGastosMensualeController {
     public List<FinIngresosGastosMensualesDTO> findAllInputs() {
         return  finIngresosGastosMensualesService.findAllInputs();
     }
-    @GetMapping("/gastos")
-    public List<FinIngresosGastosMensualesDTO> findAllOutputs() {
-        return  finIngresosGastosMensualesService.findAllOutputs();
+    @GetMapping("/gastosincidencias")
+    public List<FinIngresosGastosMensualesDTO> findAllOutputsIncidents() {
+        return  finIngresosGastosMensualesService.findAllOutputsIncidents();
+    }
+    @GetMapping("/gastosservicios")
+    public List<FinIngresosGastosMensualesDTO> findAllOutputsServices() {
+        return  finIngresosGastosMensualesService.findAllOutputsServices();
     }
     @GetMapping("/ingresosvalor")
     public BigDecimal InputsValueTotal() {
         return  finIngresosGastosMensualesService.InputsValueTotal();
     }
-    @GetMapping("/gastosvalor")
-    public BigDecimal OutputsValueTotal() {
-        return  finIngresosGastosMensualesService.OutputsValueTotal();
+    @GetMapping("/gastosincidenciasvalor")
+    public BigDecimal OutputsIncidentsValueTotal() {
+        return  finIngresosGastosMensualesService.OutputsIncidentsValueTotal();
+    }
+    @GetMapping("/gastosserviciosvalor")
+    public BigDecimal OutputsServicesValueTotal() {
+        return  finIngresosGastosMensualesService.OutputsServicesValueTotal();
     }
     @GetMapping("/saldo")
     public BigDecimal BalanceValueTotal() {

@@ -24,7 +24,7 @@ public class FinIngresosGastosMensualesService {
             List<FinIngresosGastosMensualesDTO> listaDTO = new ArrayList<FinIngresosGastosMensualesDTO>();
             List<FinIngresosGastosMensuale> lista= finIngresosGastosMensualesRepository.findAll();
             for (FinIngresosGastosMensuale valor: lista){
-                if(valor.getTipo().equals("I")){
+                if(valor.getTipo().equals("PA")){
                     listaDTO.add(new FinIngresosGastosMensualesDTO(valor.getAnio(),valor.getMes(), valor.getValor()));
                 }
 
@@ -34,12 +34,27 @@ public class FinIngresosGastosMensualesService {
             return null;
         }
     }
-    public List<FinIngresosGastosMensualesDTO> findAllOutputs() {
+    public List<FinIngresosGastosMensualesDTO> findAllOutputsIncidents() {
         try{
             List<FinIngresosGastosMensualesDTO> listaDTO = new ArrayList<FinIngresosGastosMensualesDTO>();
             List<FinIngresosGastosMensuale> lista= finIngresosGastosMensualesRepository.findAll();
             for (FinIngresosGastosMensuale valor: lista){
-                if(valor.getTipo().equals("G")){
+                if(valor.getTipo().equals("EI")){
+                    listaDTO.add(new FinIngresosGastosMensualesDTO(valor.getAnio(),valor.getMes(), valor.getValor()));
+                }
+
+            }
+            return  listaDTO;
+        }catch (Exception e){
+            return null;
+        }
+    }
+    public List<FinIngresosGastosMensualesDTO> findAllOutputsServices() {
+        try{
+            List<FinIngresosGastosMensualesDTO> listaDTO = new ArrayList<FinIngresosGastosMensualesDTO>();
+            List<FinIngresosGastosMensuale> lista= finIngresosGastosMensualesRepository.findAll();
+            for (FinIngresosGastosMensuale valor: lista){
+                if(valor.getTipo().equals("ES")){
                     listaDTO.add(new FinIngresosGastosMensualesDTO(valor.getAnio(),valor.getMes(), valor.getValor()));
                 }
 
@@ -63,10 +78,10 @@ public class FinIngresosGastosMensualesService {
         }
     }
 
-    public BigDecimal OutputsValueTotal() {
+    public BigDecimal OutputsIncidentsValueTotal() {
         try{
             BigDecimal inputs= new BigDecimal(0);
-            List<FinIngresosGastosMensualesDTO> lista= this.findAllOutputs();
+            List<FinIngresosGastosMensualesDTO> lista= this.findAllOutputsIncidents();
             for (FinIngresosGastosMensualesDTO valor: lista){
                 inputs=inputs.add(valor.getValor());
             }
@@ -76,10 +91,25 @@ public class FinIngresosGastosMensualesService {
         }
     }
 
+    public BigDecimal OutputsServicesValueTotal() {
+        try{
+            BigDecimal inputs= new BigDecimal(0);
+            List<FinIngresosGastosMensualesDTO> lista= this.findAllOutputsServices();
+            for (FinIngresosGastosMensualesDTO valor: lista){
+                inputs=inputs.add(valor.getValor());
+            }
+            return  inputs;
+        }catch (Exception e){
+            return new BigDecimal(0);
+        }
+    }
+
+
     public BigDecimal BalanceValueTotal() {
         try{
             BigDecimal inputs= this.InputsValueTotal();
-            inputs=inputs.subtract(this.OutputsValueTotal());
+            inputs=inputs.subtract(this.OutputsServicesValueTotal());
+            inputs=inputs.subtract(this.OutputsIncidentsValueTotal());
             return  inputs;
         }catch (Exception e){
             return new BigDecimal(0);

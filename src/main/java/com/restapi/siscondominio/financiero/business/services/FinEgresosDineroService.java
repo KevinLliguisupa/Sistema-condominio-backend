@@ -4,17 +4,11 @@ import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.financiero.business.dto.FinEgresosDineroDTO;
 import com.restapi.siscondominio.financiero.persistence.entities.FinGasto;
-import com.restapi.siscondominio.financiero.persistence.entities.FinIncidencia;
-import com.restapi.siscondominio.financiero.persistence.entities.FinTipoServicio;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinGastoRepository;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinIncidenciaRepository;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinTipoServicioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 

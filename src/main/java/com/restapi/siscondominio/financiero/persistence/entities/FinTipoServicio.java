@@ -28,5 +28,8 @@ public class FinTipoServicio {
 
     @OneToMany(mappedBy = "tseId")
     private Set<FinGasto> finGastos = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "tseId")
+    private Set<FinPagoServicios> finPagoServicios = new LinkedHashSet<>();
+
 
 }

@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 public class FinEgresosDineroDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
+
     public FinEgresosDineroDTO(String cedulaTesorero, String nombreTesorero, BigDecimal valorPago, Date fechaPago, String descripcionIncidencia, String tipoServicio) {
         this.cedulaTesorero = cedulaTesorero;
         this.nombreTesorero = nombreTesorero;
@@ -21,6 +21,7 @@ public class FinEgresosDineroDTO implements Serializable {
     public FinEgresosDineroDTO() {
 
     }
+    private static final long serialVersionUID = 1L;
 
     private String cedulaTesorero;
     private String nombreTesorero;
