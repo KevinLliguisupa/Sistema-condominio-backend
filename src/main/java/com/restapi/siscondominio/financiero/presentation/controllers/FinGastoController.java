@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Validated
 @RestController
@@ -26,10 +27,10 @@ public class FinGastoController {
         return finGastoService.save(vO).toString();
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        finGastoService.delete(id);
-    }
+    //@DeleteMapping("/{id}")
+    //public void delete(@Valid @NotNull @PathVariable("id") Long id) {
+    //    finGastoService.delete(id);
+    //}
 
     @PutMapping("/{id}")
     public void update(@Valid @NotNull @PathVariable("id") Long id,
@@ -42,8 +43,13 @@ public class FinGastoController {
         return finGastoService.getById(id);
     }
 
+    @GetMapping("/incidencia/{id}")
+    public List<FinGastoDTO> query(@Valid @NotNull @PathVariable("id") Long id) {
+        return finGastoService.query(id);
+    }
+
     @GetMapping
-    public Page<FinGastoDTO> query(@Valid FinGastoQueryVO vO) {
-        return finGastoService.query(vO);
+    public List<FinGastoDTO> query() {
+        return finGastoService.query();
     }
 }

@@ -6,9 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -27,7 +25,7 @@ public class FinIncidencia {
 
     @NotNull
     @Column(name = "inc_fecha_reporte", nullable = false)
-    private LocalDate incFechaReporte;
+    private Date incFechaReporte;
 
     @NotNull
     @Column(name = "inc_descripcion", nullable = false)
@@ -42,12 +40,12 @@ public class FinIncidencia {
     private Boolean incSolucionada = false;
 
     @Column(name = "inc_fecha_solucion")
-    private LocalDate incFechaSolucion;
+    private Date incFechaSolucion;
 
     @Column(name = "inc_evidencia_solucion")
     private String incEvidenciaSolucion;
 
-    @OneToMany(mappedBy = "inc")
-    private Set<FinGasto> finGastos = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "incId")
+    private List<FinGasto> finGastos = new ArrayList<FinGasto>();
 
 }
