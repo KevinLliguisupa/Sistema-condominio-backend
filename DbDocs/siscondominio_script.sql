@@ -4,7 +4,7 @@ CREATE SEQUENCE public.seg_bitacora_bit_id_seq;
 CREATE TABLE public.seg_bitacora (
                                      bit_id INTEGER NOT NULL DEFAULT nextval('public.seg_bitacora_bit_id_seq'),
                                      bit_ced_guardia VARCHAR NOT NULL,
-                                     bit_fecha VARCHAR NOT NULL,
+                                     bit_fecha date NOT NULL,
                                      bit_evento VARCHAR NOT NULL,
                                      bit_ced_ingreso VARCHAR NOT NULL,
                                      bit_descripcion VARCHAR,
@@ -19,6 +19,7 @@ CREATE SEQUENCE public.fin_tipo_servicio_tis_id_seq;
 
 CREATE TABLE public.fin_tipo_servicio (
                                           tse_id INTEGER NOT NULL DEFAULT nextval('public.fin_tipo_servicio_tis_id_seq'),
+                                          tse_incidencia BOOLEAN NOT NULL,
                                           tse_nombre VARCHAR NOT NULL,
                                           tse_descripcion VARCHAR NOT NULL,
                                           CONSTRAINT fin_tipo_servicio_pk PRIMARY KEY (tse_id)
@@ -251,9 +252,10 @@ CREATE TABLE public.ctr_reservacion (
                                         lug_id INTEGER NOT NULL,
                                         usu_cedula VARCHAR(10) NOT NULL,
                                         res_fecha DATE,
-                                        res_hora_inicio DATE NOT NULL,
-                                        res_hora_fin DATE NOT NULL,
+                                        res_hora_inicio time with time zone NOT NULL,
+                                        res_hora_fin time with time zone NOT NULL,
                                         res_aprobado BOOLEAN NOT NULL,
+                                        res_activa BOOLEAN NOT NULL,
                                         CONSTRAINT ctr_reservacion_pk PRIMARY KEY (res_id)
 );
 
@@ -404,3 +406,62 @@ ALTER TABLE public.fin_deuda_pago ADD CONSTRAINT fin_deuda_fin_deuda_pago_fk
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
         NOT DEFERRABLE;
+
+create view fin_egresos_incidencias as
+SELECT EXTRACT(year FROM gasto.gas_fecha) AS anio,
+       EXTRACT(month FROM gasto.gas_fecha) AS mes,
+       servicio.tse_id AS codigo,
+       servicio.tse_nombre AS servicio,
+       sum(gasto.gas_pago) AS valor,
+       count(incidencia.*) AS incidencias,
+       concat(EXTRACT(year FROM gasto.gas_fecha), '-', EXTRACT(month FROM gasto.gas_fecha), '-', servicio.tse_id) AS concat
+FROM fin_tipo_servicio servicio
+         FULL JOIN fin_gastos gasto ON gasto.tse_id = servicio.tse_id
+         FULL JOIN fin_incidencia incidencia ON incidencia.inc_id = gasto.inc_id
+WHERE servicio.tse_incidencia IS TRUE
+GROUP BY (EXTRACT(year FROM gasto.gas_fecha)), (EXTRACT(month FROM gasto.gas_fecha)), servicio.tse_id, servicio.tse_nombre
+ORDER BY (EXTRACT(year FROM gasto.gas_fecha)), (EXTRACT(month FROM gasto.gas_fecha));
+
+
+
+create view fin_egresos_servicios as
+SELECT EXTRACT(year FROM pago.pse_fecha_pago) AS anio,
+       EXTRACT(month FROM pago.pse_fecha_pago) AS mes,
+       servicio.tse_id AS codigo,
+       servicio.tse_nombre AS servicio,
+       sum(pago.pse_monto) AS valor,
+       concat(EXTRACT(year FROM pago.pse_fecha_pago), '-', EXTRACT(month FROM pago.pse_fecha_pago), '-', servicio.tse_id) AS concat
+FROM fin_tipo_servicio servicio
+         FULL JOIN fin_pago_servicios pago ON pago.tse_id = servicio.tse_id
+WHERE servicio.tse_incidencia IS FALSE
+GROUP BY (EXTRACT(year FROM pago.pse_fecha_pago)), (EXTRACT(month FROM pago.pse_fecha_pago)), servicio.tse_id
+ORDER BY (EXTRACT(year FROM pago.pse_fecha_pago)), (EXTRACT(month FROM pago.pse_fecha_pago));
+
+
+
+
+create view fin_ingresos_gastos_mensuales as
+SELECT EXTRACT(year FROM fnpago.pag_fecha) AS anio,
+       EXTRACT(month FROM fnpago.pag_fecha) AS mes,
+       sum(fnpago.pag_valor) AS valor,
+       concat('PA') AS tipo,
+       concat(EXTRACT(year FROM fnpago.pag_fecha), '-', EXTRACT(month FROM fnpago.pag_fecha), '-PA') AS fecha
+FROM fin_pago fnpago
+GROUP BY (EXTRACT(year FROM fnpago.pag_fecha)), (EXTRACT(month FROM fnpago.pag_fecha))
+UNION
+SELECT EXTRACT(year FROM gaspago.gas_fecha) AS anio,
+       EXTRACT(month FROM gaspago.gas_fecha) AS mes,
+       sum(gaspago.gas_pago) AS valor,
+       concat('EI') AS tipo,
+       concat(EXTRACT(year FROM gaspago.gas_fecha), '-', EXTRACT(month FROM gaspago.gas_fecha), '-EI') AS fecha
+FROM fin_gastos gaspago
+GROUP BY (EXTRACT(year FROM gaspago.gas_fecha)), (EXTRACT(month FROM gaspago.gas_fecha))
+UNION
+SELECT EXTRACT(year FROM pagoserv.pse_fecha_pago) AS anio,
+       EXTRACT(month FROM pagoserv.pse_fecha_pago) AS mes,
+       sum(pagoserv.pse_monto) AS valor,
+       concat('ES') AS tipo,
+       concat(EXTRACT(year FROM pagoserv.pse_fecha_pago), '-', EXTRACT(month FROM pagoserv.pse_fecha_pago), '-ES') AS fecha
+FROM fin_pago_servicios pagoserv
+GROUP BY (EXTRACT(year FROM pagoserv.pse_fecha_pago)), (EXTRACT(month FROM pagoserv.pse_fecha_pago))
+ORDER BY 2;

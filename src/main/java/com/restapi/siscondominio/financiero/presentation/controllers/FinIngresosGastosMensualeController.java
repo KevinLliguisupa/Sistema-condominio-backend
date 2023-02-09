@@ -1,5 +1,6 @@
 package com.restapi.siscondominio.financiero.presentation.controllers;
 
+import com.restapi.siscondominio.financiero.business.dto.FinDeudaTotalDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinIngresosGastosMensualesDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinTipoServicioDTO;
 import com.restapi.siscondominio.financiero.business.services.FinIngresosGastosMensualesService;
@@ -39,19 +40,19 @@ public class FinIngresosGastosMensualeController {
         return  finIngresosGastosMensualesService.findAllOutputsServices();
     }
     @GetMapping("/ingresosvalor")
-    public BigDecimal InputsValueTotal() {
+    public FinDeudaTotalDTO InputsValueTotal() {
         return  finIngresosGastosMensualesService.InputsValueTotal();
     }
     @GetMapping("/gastosincidenciasvalor")
-    public BigDecimal OutputsIncidentsValueTotal() {
+    public FinDeudaTotalDTO OutputsIncidentsValueTotal() {
         return  finIngresosGastosMensualesService.OutputsIncidentsValueTotal();
     }
     @GetMapping("/gastosserviciosvalor")
-    public BigDecimal OutputsServicesValueTotal() {
+    public FinDeudaTotalDTO OutputsServicesValueTotal() {
         return  finIngresosGastosMensualesService.OutputsServicesValueTotal();
     }
     @GetMapping("/saldo")
-    public BigDecimal BalanceValueTotal() {
+    public FinDeudaTotalDTO BalanceValueTotal() {
         return  finIngresosGastosMensualesService.BalanceValueTotal();
     }
 

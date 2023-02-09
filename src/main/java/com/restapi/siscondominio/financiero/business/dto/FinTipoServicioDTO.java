@@ -8,10 +8,11 @@ import java.io.Serializable;
 @Data
 public class FinTipoServicioDTO implements Serializable {
 
-    public FinTipoServicioDTO(Long tseId, String tseNombre, String tseDescripcion) {
+    public FinTipoServicioDTO(Long tseId, String tseNombre, String tseDescripcion,Boolean tseIncidencia) {
         this.tseId = tseId;
         this.tseNombre = tseNombre;
         this.tseDescripcion = tseDescripcion;
+        this.tseIncidencia=tseIncidencia;
     }
     public FinTipoServicioDTO() {
     }
@@ -22,5 +23,6 @@ public class FinTipoServicioDTO implements Serializable {
     private String tseNombre;
 
     private String tseDescripcion;
+    private Boolean tseIncidencia;
 
 }

@@ -1,5 +1,6 @@
 package com.restapi.siscondominio.financiero.business.services;
 
+import com.restapi.siscondominio.financiero.business.dto.FinDeudaTotalDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinIngresosGastosMensualesDTO;
 import com.restapi.siscondominio.financiero.persistence.entities.FinIngresosGastosMensuale;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinIngresosGastosMensualesRepository;
@@ -65,54 +66,55 @@ public class FinIngresosGastosMensualesService {
         }
     }
 
-    public BigDecimal InputsValueTotal() {
+    public FinDeudaTotalDTO InputsValueTotal() {
         try{
             BigDecimal inputs= new BigDecimal(0);
             List<FinIngresosGastosMensualesDTO> lista= this.findAllInputs();
             for (FinIngresosGastosMensualesDTO valor: lista){
                 inputs= inputs.add(valor.getValor());
             }
-            return  inputs;
+            return  new FinDeudaTotalDTO(inputs);
         }catch (Exception e){
-            return new BigDecimal(0);
+            return new FinDeudaTotalDTO(new BigDecimal(0));
         }
     }
 
-    public BigDecimal OutputsIncidentsValueTotal() {
+    public FinDeudaTotalDTO OutputsIncidentsValueTotal() {
         try{
             BigDecimal inputs= new BigDecimal(0);
             List<FinIngresosGastosMensualesDTO> lista= this.findAllOutputsIncidents();
             for (FinIngresosGastosMensualesDTO valor: lista){
                 inputs=inputs.add(valor.getValor());
             }
-            return  inputs;
+            return  new FinDeudaTotalDTO(inputs);
         }catch (Exception e){
-            return new BigDecimal(0);
+            return new FinDeudaTotalDTO(new BigDecimal(0));
         }
     }
 
-    public BigDecimal OutputsServicesValueTotal() {
+    public FinDeudaTotalDTO OutputsServicesValueTotal() {
         try{
             BigDecimal inputs= new BigDecimal(0);
             List<FinIngresosGastosMensualesDTO> lista= this.findAllOutputsServices();
             for (FinIngresosGastosMensualesDTO valor: lista){
                 inputs=inputs.add(valor.getValor());
             }
-            return  inputs;
+            return  new FinDeudaTotalDTO(inputs);
         }catch (Exception e){
-            return new BigDecimal(0);
+            return new FinDeudaTotalDTO(new BigDecimal(0));
         }
     }
 
 
-    public BigDecimal BalanceValueTotal() {
+    public FinDeudaTotalDTO BalanceValueTotal() {
         try{
-            BigDecimal inputs= this.InputsValueTotal();
-            inputs=inputs.subtract(this.OutputsServicesValueTotal());
-            inputs=inputs.subtract(this.OutputsIncidentsValueTotal());
-            return  inputs;
+            FinDeudaTotalDTO inputs= this.InputsValueTotal();
+            inputs.setValor(inputs.getValor().subtract(this.OutputsServicesValueTotal().getValor()));
+            inputs.setValor(inputs.getValor().subtract(this.OutputsIncidentsValueTotal().getValor()));
+
+            return  new FinDeudaTotalDTO(inputs.getValor());
         }catch (Exception e){
-            return new BigDecimal(0);
+            return new FinDeudaTotalDTO(new BigDecimal(0));
         }
     }
 

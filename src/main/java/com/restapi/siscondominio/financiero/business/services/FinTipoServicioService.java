@@ -56,7 +56,7 @@ public class FinTipoServicioService {
            List<FinTipoServicioDTO> listaTiposServiciosDTO= new ArrayList<FinTipoServicioDTO>();
 
            for(FinTipoServicio tipoServicio:listaTiposServicios ){
-               listaTiposServiciosDTO.add(new FinTipoServicioDTO(tipoServicio.getTseId(), tipoServicio.getTseNombre(), tipoServicio.getTseDescripcion()));
+               listaTiposServiciosDTO.add(new FinTipoServicioDTO(tipoServicio.getTseId(), tipoServicio.getTseNombre(), tipoServicio.getTseDescripcion(), tipoServicio.getTseIncidencia()));
            }
            return listaTiposServiciosDTO;
        }catch (Exception e){

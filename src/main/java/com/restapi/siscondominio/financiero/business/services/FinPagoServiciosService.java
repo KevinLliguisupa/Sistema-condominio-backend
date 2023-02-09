@@ -42,7 +42,7 @@ public class FinPagoServiciosService {
         FinPagoServicios original = requireOne(id);
         FinPagoServiciosDTO pagoServiciosDTO=toDTO(original);
 
-        pagoServiciosDTO.setPseNomTesorero(ctrUsuarioRepository.getById(original.getPseCedTesorero()).getUsuNombres());
+        pagoServiciosDTO.setPseNomTesorero(ctrUsuarioRepository.getById(original.getPseCedTesorero()).getUsuApellidos()+" "+ctrUsuarioRepository.getById(original.getPseCedTesorero()).getUsuNombres());
         return pagoServiciosDTO;
     }
 
