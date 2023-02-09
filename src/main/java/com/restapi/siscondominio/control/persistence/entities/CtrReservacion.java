@@ -4,7 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -27,13 +30,18 @@ public class CtrReservacion implements Serializable {
     @Column(name = "res_fecha")
     private LocalDate resFecha;
 
+
     @Column(name = "res_hora_inicio", nullable = false)
-    private LocalDate resHoraInicio;
+    private LocalTime resHoraInicio;
+
 
     @Column(name = "res_hora_fin", nullable = false)
-    private LocalDate resHoraFin;
+    private LocalTime resHoraFin;
 
     @Column(name = "res_aprobado", nullable = false)
     private Boolean resAprobado = false;
+
+    @Column(name = "res_activa", nullable = false)
+    private Boolean resActiva = false;
 
 }

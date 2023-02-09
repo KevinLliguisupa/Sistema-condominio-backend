@@ -4,20 +4,18 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 
 @Data
 public class SegBitacoraVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "bitId can not null")
-    private Long bitId;
+
 
     @NotNull(message = "bitCedGuardia can not null")
     private String bitCedGuardia;
 
-    @NotNull(message = "bitFecha can not null")
-    private String bitFecha;
 
     @NotNull(message = "bitEvento can not null")
     private String bitEvento;
@@ -27,7 +25,6 @@ public class SegBitacoraVO implements Serializable {
 
     private String bitDescripcion;
 
-    @NotNull(message = "bitIngreso can not null")
-    private Boolean bitIngreso;
+
 
 }

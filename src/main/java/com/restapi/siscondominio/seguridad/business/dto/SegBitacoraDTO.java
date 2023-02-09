@@ -4,6 +4,7 @@ package com.restapi.siscondominio.seguridad.business.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 public class SegBitacoraDTO implements Serializable {
@@ -12,7 +13,7 @@ public class SegBitacoraDTO implements Serializable {
 
     private String bitCedGuardia;
 
-    private String bitFecha;
+    private LocalDate bitFecha;
 
     private String bitEvento;
 

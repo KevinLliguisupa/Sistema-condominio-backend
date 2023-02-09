@@ -1,6 +1,7 @@
 package com.restapi.siscondominio.control.business.dto;
 
 
+import com.restapi.siscondominio.control.persistence.entities.CtrTipoAnuncio;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,5 +12,8 @@ public class CtrTipoAnuncioDTO implements Serializable {
     private Long tanId;
 
     private String tanNombre;
+
+
+
 
 }

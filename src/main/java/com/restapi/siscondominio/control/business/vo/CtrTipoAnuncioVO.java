@@ -10,8 +10,6 @@ import java.io.Serializable;
 public class CtrTipoAnuncioVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "tanId can not null")
-    private Long tanId;
 
     @NotNull(message = "tanNombre can not null")
     private String tanNombre;

@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 @Data
 public class CtrReservacionDTO implements Serializable {
@@ -15,12 +19,16 @@ public class CtrReservacionDTO implements Serializable {
 
     private String usuCedula;
 
-    private Date resFecha;
+    private LocalDate resFecha;
 
-    private Date resHoraInicio;
+    private LocalTime resHoraInicio;
 
-    private Date resHoraFin;
+    private LocalTime resHoraFin;
 
     private Boolean resAprobado;
+
+    private Boolean resActiva;
+
+
 
 }
