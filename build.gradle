@@ -28,6 +28,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//Maven security crypto
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
+	implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.3'
 }
 
 tasks.named('test') {

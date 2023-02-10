@@ -13,6 +13,7 @@ import java.util.Set;
 @Table(name = "ctr_perfil")
 public class CtrPerfil implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prf_id", nullable = false)
     private Long prfId;
 
