@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "fin_deuda_pago")
 public class FinDeudaPago implements Serializable {
     @Id

@@ -1,7 +1,6 @@
 package com.restapi.siscondominio.financiero.persistence.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +12,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "fin_pago")
 public class FinPago implements Serializable {
     @Id

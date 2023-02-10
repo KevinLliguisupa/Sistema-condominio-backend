@@ -55,6 +55,14 @@ public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO>{
         return toListDTO(finDeudaRepository.findAll(hasUser, sorter));
     }
 
+    public List<FinDeuda> getDeudasByUser(String cedulaUsuario) {
+        Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario));
+        Sort byFecha = Sort.by("deuFechaCorte").descending();
+        Sort sorter = Sort.by("deuCancelado").and(byFecha);
+
+        return finDeudaRepository.findAll(hasUser, sorter);
+    }
+
     public FinDeudaInfoDTO getById(Long id) {
         FinDeuda original = requireOne(id);
         return toInfoDTO(original);
