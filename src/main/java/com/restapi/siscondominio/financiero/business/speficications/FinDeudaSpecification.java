@@ -10,4 +10,8 @@ public class FinDeudaSpecification {
         usuBusqueda.setUsuCedula(cedulaUsuario);
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("usuCedula"), usuBusqueda));
     }
+
+    public static Specification<FinDeuda> isCancelado(Boolean estado) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("deuCancelado"), estado));
+    }
 }

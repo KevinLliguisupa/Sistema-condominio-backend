@@ -177,8 +177,8 @@ public class FinPagoServiceTest {
 
         //Resultado esperado
         List<FinDeuda> esperado = List.of(
-                FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(BigDecimal.ZERO).deuCancelado(true).build(),
-                FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(BigDecimal.ZERO).deuCancelado(true).build());
+                FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build(),
+                FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build());
         //When
         List<FinDeuda> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
 
@@ -202,11 +202,11 @@ public class FinPagoServiceTest {
         given(deudaRepository.save(any(FinDeuda.class))).willAnswer(i -> i.getArgument(0));
         FinPagoVO pagoIngresado = FinPagoVO.builder()
                 .cedTesorero("1002585459")
-                .pagValor(new BigDecimal(110)).build();
+                .pagValor(new BigDecimal("110.000")).build();
 
         //Resultado esperado
         FinDeuda deudaEsperada1 = FinDeuda.builder().usuCedula(usuarioPrueba)
-                .deuSaldo(BigDecimal.ZERO).deuCancelado(true).build();
+                .deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build();
 
         //When
         List<FinDeuda> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);

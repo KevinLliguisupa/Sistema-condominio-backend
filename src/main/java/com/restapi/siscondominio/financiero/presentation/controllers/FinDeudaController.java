@@ -54,6 +54,24 @@ public class FinDeudaController {
         }
     }
 
+    @GetMapping("usuario/{id}/pendientes")
+    public ResponseEntity<Object> getDeudasByUsuario(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario,
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getDeudasByInquilino(cedulaUsuario, size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getDeudasByInquilino(cedulaUsuario));
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@Valid @NotNull @PathVariable("id") Long id) {
         try {

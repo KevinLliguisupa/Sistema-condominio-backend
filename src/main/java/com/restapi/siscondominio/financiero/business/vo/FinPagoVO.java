@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class FinPagoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-
+    @NotNull(message = "pagValor can not null")
     private BigDecimal pagValor;
 
     @NotNull(message = "cedTesorero can not null")

@@ -1,6 +1,7 @@
 package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
+import com.restapi.siscondominio.financiero.business.dto.FinDeudaDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinPagoDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinReciboDTO;
 import com.restapi.siscondominio.financiero.business.dto.RegistroPagosDTO;
@@ -73,6 +74,7 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         ctrUsuarioRepository.findById(cedulaInquilino)
                 .orElseThrow(() -> new ResourceNotFoundException("Inquilino no encontrado: "
                         + cedulaInquilino));
+
         List<FinDeuda> deudas = finDeudaService.getDeudasByUser(cedulaInquilino);
         if (deudas.size() == 0) {
             throw new ResourceNotFoundException("No posee deudas por el momento");
@@ -109,20 +111,20 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         try {
             // Se guarda el pago agregando la fecha actual
             FinPago pagoRealizado = guardarPago(requestBody);
-
             for (FinDeuda deuda : deudasPendientes) {
                 dineroDisponible = dineroDisponible.subtract(deuda.getDeuSaldo());
                 //Se crea los registros en la tabla intermedia deuda_pago
-                guardarDeudaPago(pagoRealizado, deuda, deuda.getDeuSaldo());
 
                 //Actualizacion a los valores de saldo y estado de la deuda
                 if (dineroDisponible.compareTo(BigDecimal.ZERO) <= 0) {
+                    guardarDeudaPago(pagoRealizado, deuda, dineroDisponible.add(deuda.getDeuSaldo()));
                     deuda.setDeuSaldo(dineroDisponible.abs());
-                    deuda.setDeuCancelado(dineroDisponible.equals(BigDecimal.ZERO));
+                    deuda.setDeuCancelado(dineroDisponible.equals(new BigDecimal("0.000")));
                     deudasPagadas.add(finDeudaRepository.save(deuda));
                     break;
                 } else {
-                    deuda.setDeuSaldo(BigDecimal.ZERO);
+                    guardarDeudaPago(pagoRealizado, deuda, deuda.getDeuSaldo());
+                    deuda.setDeuSaldo(new BigDecimal("0.000"));
                     deuda.setDeuCancelado(true);
                     deudasPagadas.add(finDeudaRepository.save(deuda));
                 }
@@ -132,6 +134,11 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         }
         return deudasPagadas;
     }
+
+    public List<FinDeudaDTO> crearPago(String cedulaInquilino, @NotNull FinPagoVO requestBody) throws Exception {
+        return finDeudaService.toListDTO(pagarDiferido(cedulaInquilino, requestBody));
+    }
+
 
     public FinReciboDTO getReciboByPago(long pagoId) {
         //Se consulta la informacion del recibo de la vista fin_recibo
@@ -155,7 +162,7 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
                     .deuId(recibo.getDeuId()).build());
         }
         //Estructuramos el recibo a DTO
-        FinRecibo recibo= registros.get(0);
+        FinRecibo recibo = registros.get(0);
 
         return FinReciboDTO.builder()
                 .pagId(recibo.getPagId()).pagValor(recibo.getPagValor())

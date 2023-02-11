@@ -56,11 +56,33 @@ public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO>{
     }
 
     public List<FinDeuda> getDeudasByUser(String cedulaUsuario) {
-        Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario));
-        Sort byFecha = Sort.by("deuFechaCorte").descending();
+        Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario))
+                .and(FinDeudaSpecification.isCancelado(false));
+
+        Sort byFecha = Sort.by("deuFechaCorte").ascending();
         Sort sorter = Sort.by("deuCancelado").and(byFecha);
 
         return finDeudaRepository.findAll(hasUser, sorter);
+    }
+
+    public Page<FinDeudaDTO> getDeudasByInquilino(@NotNull String cedulaUsuario, Integer size, Integer page) {
+        Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario))
+                .and(FinDeudaSpecification.isCancelado(false));
+
+        Sort byFecha = Sort.by("deuFechaCorte").ascending();
+        Sort sorter = Sort.by("deuCancelado").and(byFecha);
+
+        return toPageDTO(finDeudaRepository.findAll(hasUser, PageRequest.of(page, size, sorter)));
+    }
+
+    public List<FinDeudaDTO> getDeudasByInquilino(String cedulaUsuario) {
+        Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario))
+                .and(FinDeudaSpecification.isCancelado(false));
+
+        Sort byFecha = Sort.by("deuFechaCorte").ascending();
+        Sort sorter = Sort.by("deuCancelado").and(byFecha);
+
+        return toListDTO(finDeudaRepository.findAll(hasUser, sorter));
     }
 
     public FinDeudaInfoDTO getById(Long id) {

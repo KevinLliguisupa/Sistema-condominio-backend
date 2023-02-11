@@ -38,9 +38,15 @@ public class FinPagoController {
         }
     }
 
-    @PostMapping
-    public String save(@Valid @RequestBody FinPagoVO vO) {
-        return finPagoService.save(vO).toString();
+    @PostMapping("/diferidos/{inqId}")
+    public ResponseEntity<Object> save(@Valid @NotNull @PathVariable("inqId") String inqId, @RequestBody FinPagoVO requestBody) {
+        try {
+            return ResponseHandler.generateResponse("¡Pago creado correctamente!",
+                    HttpStatus.CREATED, finPagoService.crearPago(inqId, requestBody));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{id}")
@@ -48,3 +54,13 @@ public class FinPagoController {
         return finPagoService.getById(id);
     }
 }
+
+
+
+
+
+
+
+
+
+
