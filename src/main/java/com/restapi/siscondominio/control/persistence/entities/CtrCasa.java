@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Table(name = "ctr_casa")
 public class CtrCasa implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cas_id", nullable = false, length = 6)
     private String casId;
 

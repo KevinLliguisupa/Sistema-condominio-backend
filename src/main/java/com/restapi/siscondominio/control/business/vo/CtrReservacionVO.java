@@ -12,16 +12,14 @@ import java.time.OffsetDateTime;
 public class CtrReservacionVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "resId can not null")
-    private Long resId;
 
     @NotNull(message = "lugId can not null")
     private Long lugId;
 
     @NotNull(message = "usuCedula can not null")
     private String usuCedula;
-
-    private Date resFecha;
+    @NotNull(message = "lugId can not null")
+    private LocalDate resFecha;
 
     @NotNull(message = "resHoraInicio can not null")
     private OffsetDateTime resHoraInicio;
@@ -29,8 +27,6 @@ public class CtrReservacionVO implements Serializable {
     @NotNull(message = "resHoraFin can not null")
     private OffsetDateTime resHoraFin;
 
-    @NotNull(message = "resAprobado can not null")
-    private Boolean resAprobado;
 
     @NotNull(message = "resActiva can not null")
     private Boolean resActiva;

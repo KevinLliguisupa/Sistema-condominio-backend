@@ -1,10 +1,13 @@
 package com.restapi.siscondominio.control.business.dto;
 
 
+import com.restapi.siscondominio.control.business.vo.CtrAnuncioVO;
+import com.restapi.siscondominio.control.persistence.entities.CtrAnuncio;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 public class CtrAnuncioDTO implements Serializable {
@@ -17,12 +20,18 @@ public class CtrAnuncioDTO implements Serializable {
 
     private String ancDescripcion;
 
-    private Date ancFechaPublicacion;
+    private LocalDate ancFechaPublicacion;
 
     private String ancPrioridad;
 
     private Boolean ancEstado;
 
     private Long tanId;
+
+    public CtrAnuncioDTO() {
+    }
+
+
+
 
 }

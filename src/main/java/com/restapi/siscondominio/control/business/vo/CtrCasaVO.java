@@ -16,7 +16,6 @@ public class CtrCasaVO implements Serializable {
     @NotNull(message = "usuCedula can not null")
     private String usuCedula;
 
-    @NotNull(message = "casOcupado can not null")
-    private Boolean casOcupado;
+
 
 }

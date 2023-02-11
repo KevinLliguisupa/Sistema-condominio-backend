@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 public class CtrReunionDTO implements Serializable {
@@ -13,7 +14,7 @@ public class CtrReunionDTO implements Serializable {
 
     private String usuCedula;
 
-    private Date reuFecha;
+    private LocalDate reuFecha;
 
     private Boolean reuEstado;
 

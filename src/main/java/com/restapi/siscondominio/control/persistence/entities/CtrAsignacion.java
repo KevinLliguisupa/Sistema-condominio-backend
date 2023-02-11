@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.stream.DoubleStream;
 
 @Getter
 @Setter
@@ -22,5 +23,6 @@ public class CtrAsignacion implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usu_cedula", nullable = false)
     private CtrUsuario usuCedula;
+
 
 }

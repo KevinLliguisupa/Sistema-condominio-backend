@@ -16,7 +16,7 @@ public class CtrReservacionDTO implements Serializable {
 
     private String usuCedula;
 
-    private Date resFecha;
+    private LocalDate resFecha;
 
     private OffsetDateTime resHoraInicio;
 
@@ -24,5 +24,9 @@ public class CtrReservacionDTO implements Serializable {
 
     private Boolean resAprobado;
     private Boolean resActiva;
+
+    private Boolean resActiva;
+
+
 
 }

@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -22,7 +24,7 @@ public class SegBitacora {
 
     @NotNull
     @Column(name = "bit_fecha", nullable = false)
-    private String bitFecha;
+    private LocalDate bitFecha;
 
     @NotNull
     @Column(name = "bit_evento", nullable = false)
