@@ -8,7 +8,7 @@ import com.restapi.siscondominio.financiero.business.exceptions.IncorrectValueEx
 import com.restapi.siscondominio.financiero.business.exceptions.ResourceNotFoundException;
 import com.restapi.siscondominio.financiero.business.services.FinDeudaService;
 import com.restapi.siscondominio.financiero.business.services.FinPagoService;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoVO;
+import com.restapi.siscondominio.financiero.business.vo.FinPagoDiferidoVO;
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeuda;
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeudaPago;
 import com.restapi.siscondominio.financiero.persistence.entities.FinPago;
@@ -117,7 +117,7 @@ public class FinPagoServiceTest {
 
         //When
         ResourceNotFoundException thrown = assertThrows(ResourceNotFoundException.class,
-                () -> pagoService.pagarDiferido("0102116381", new FinPagoVO()));
+                () -> pagoService.pagarDiferido("0102116381", new FinPagoDiferidoVO()));
 
         //Then
         assertEquals("Inquilino no encontrado: 0102116381", thrown.getMessage());
@@ -133,7 +133,7 @@ public class FinPagoServiceTest {
         //When
 
         ResourceNotFoundException thrown = assertThrows(ResourceNotFoundException.class,
-                () -> pagoService.pagarDiferido("0507896547", new FinPagoVO()));
+                () -> pagoService.pagarDiferido("0507896547", new FinPagoDiferidoVO()));
 
         //Then
         assertEquals("No posee deudas por el momento", thrown.getMessage());
@@ -147,7 +147,7 @@ public class FinPagoServiceTest {
         given(usuarioRepository.findById(any(String.class))).willReturn(Optional.of(usuarioPrueba));
         given(deudaService.getDeudasByUser(any(String.class))).willReturn(deudasPendientes);
 
-        FinPagoVO pagoIngresado = FinPagoVO.builder()
+        FinPagoDiferidoVO pagoIngresado = FinPagoDiferidoVO.builder()
                 .cedTesorero("1002585459")
                 .pagValor(new BigDecimal(-10))
                 .build();
@@ -171,7 +171,7 @@ public class FinPagoServiceTest {
         given(deudaPagoRepository.save(any(FinDeudaPago.class))).willAnswer(i -> i.getArgument(0));
         given(deudaRepository.save(any(FinDeuda.class))).willAnswer(i -> i.getArgument(0));
 
-        FinPagoVO pagoIngresado = FinPagoVO.builder()
+        FinPagoDiferidoVO pagoIngresado = FinPagoDiferidoVO.builder()
                 .cedTesorero("1002585459")
                 .pagValor(new BigDecimal(235)).build();
 
@@ -180,15 +180,15 @@ public class FinPagoServiceTest {
                 FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build(),
                 FinDeuda.builder().usuCedula(usuarioPrueba).deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build());
         //When
-        List<FinDeuda> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
+        List<FinDeudaPago> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
 
         //Then
         //comprueba que el usuario es el correcto
-        assertEquals(esperado.get(0).getUsuCedula(),obtenido.get(0).getUsuCedula());
+        assertEquals(esperado.get(0).getUsuCedula(),obtenido.get(0).getDeu().getUsuCedula());
         //Comprueba que el saldo pendiente es 0
-        assertEquals(esperado.get(0).getDeuSaldo(),obtenido.get(0).getDeuSaldo());
+        assertEquals(esperado.get(0).getDeuSaldo(),obtenido.get(0).getDeu().getDeuSaldo());
         //Comprueba que se cambio el estado a pagado
-        assertEquals(esperado.get(1).getDeuCancelado(), obtenido.get(1).getDeuCancelado());
+        assertEquals(esperado.get(1).getDeuCancelado(), obtenido.get(1).getDeu().getDeuCancelado());
     }
 
     @DisplayName("Test pagar una deuda")
@@ -200,7 +200,7 @@ public class FinPagoServiceTest {
         given(pagoRepository.save(any(FinPago.class))).willAnswer(i -> i.getArgument(0));
         given(deudaPagoRepository.save(any(FinDeudaPago.class))).willAnswer(i -> i.getArgument(0));
         given(deudaRepository.save(any(FinDeuda.class))).willAnswer(i -> i.getArgument(0));
-        FinPagoVO pagoIngresado = FinPagoVO.builder()
+        FinPagoDiferidoVO pagoIngresado = FinPagoDiferidoVO.builder()
                 .cedTesorero("1002585459")
                 .pagValor(new BigDecimal("110.000")).build();
 
@@ -209,12 +209,12 @@ public class FinPagoServiceTest {
                 .deuSaldo(new BigDecimal("0.000")).deuCancelado(true).build();
 
         //When
-        List<FinDeuda> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
+        List<FinDeudaPago> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
 
         //Then
         //Comprueba que el saldo pendiente y si se encuentra cancelado
-        assertEquals(deudaEsperada1.getDeuSaldo(),obtenido.get(0).getDeuSaldo());
-        assertEquals(deudaEsperada1.getDeuCancelado(), obtenido.get(0).getDeuCancelado());
+        assertEquals(deudaEsperada1.getDeuSaldo(),obtenido.get(0).getDeu().getDeuSaldo());
+        assertEquals(deudaEsperada1.getDeuCancelado(), obtenido.get(0).getDeu().getDeuCancelado());
         assertEquals(1, obtenido.size());
     }
 
@@ -227,7 +227,7 @@ public class FinPagoServiceTest {
         given(pagoRepository.save(any(FinPago.class))).willAnswer(i -> i.getArgument(0));
         given(deudaPagoRepository.save(any(FinDeudaPago.class))).willAnswer(i -> i.getArgument(0));
         given(deudaRepository.save(any(FinDeuda.class))).willAnswer(i -> i.getArgument(0));
-        FinPagoVO pagoIngresado = FinPagoVO.builder()
+        FinPagoDiferidoVO pagoIngresado = FinPagoDiferidoVO.builder()
                 .cedTesorero("1002585459")
                 .pagValor(new BigDecimal(150)).build();
 
@@ -238,13 +238,13 @@ public class FinPagoServiceTest {
                 .deuSaldo(new BigDecimal(85)).deuCancelado(false).build();
 
         //When
-        List<FinDeuda> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
+        List<FinDeudaPago> obtenido = pagoService.pagarDiferido("0507896547",pagoIngresado);
 
         //Then
         assertEquals(3, obtenido.size());
-        assertEquals(deudaEsperada2.getDeuCancelado(), obtenido.get(1).getDeuCancelado());
-        assertEquals(deudaEsperada3.getDeuSaldo(),obtenido.get(2).getDeuSaldo());
-        assertEquals(deudaEsperada3.getDeuCancelado(), obtenido.get(2).getDeuCancelado());
+        assertEquals(deudaEsperada2.getDeuCancelado(), obtenido.get(1).getDeu().getDeuCancelado());
+        assertEquals(deudaEsperada3.getDeuSaldo(),obtenido.get(2).getDeu().getDeuSaldo());
+        assertEquals(deudaEsperada3.getDeuCancelado(), obtenido.get(2).getDeu().getDeuCancelado());
     }
 
     @DisplayName("Test error inesperado en el pago")

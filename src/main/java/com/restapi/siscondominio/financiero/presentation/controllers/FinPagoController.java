@@ -2,7 +2,8 @@ package com.restapi.siscondominio.financiero.presentation.controllers;
 
 import com.restapi.siscondominio.financiero.business.dto.FinPagoDTO;
 import com.restapi.siscondominio.financiero.business.services.FinPagoService;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoVO;
+import com.restapi.siscondominio.financiero.business.vo.FinPagoComunVO;
+import com.restapi.siscondominio.financiero.business.vo.FinPagoDiferidoVO;
 import com.restapi.siscondominio.financiero.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,13 +39,24 @@ public class FinPagoController {
         }
     }
 
-    @PostMapping("/diferidos/{inqId}")
-    public ResponseEntity<Object> save(@Valid @NotNull @PathVariable("inqId") String inqId, @RequestBody FinPagoVO requestBody) {
+    @PostMapping("/diferidos")
+    public ResponseEntity<Object> savePagoDiferido(@Valid @NotNull @RequestBody FinPagoDiferidoVO requestBody) {
         try {
             return ResponseHandler.generateResponse("¡Pago creado correctamente!",
-                    HttpStatus.CREATED, finPagoService.crearPago(inqId, requestBody));
+                    HttpStatus.CREATED, finPagoService.crearPagoDiferido(requestBody));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/comunes")
+    public ResponseEntity<Object> savePagoComun(@Valid @NotNull @RequestBody FinPagoComunVO requestBody) {
+        try {
+            return ResponseHandler.generateResponse("¡Pago creado correctamente!",
+                    HttpStatus.CREATED, finPagoService.crearPagoComun(requestBody));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("Error, no se pudo crear el pago",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

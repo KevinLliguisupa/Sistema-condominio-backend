@@ -1,14 +1,12 @@
 package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
-import com.restapi.siscondominio.financiero.business.dto.FinDeudaDTO;
-import com.restapi.siscondominio.financiero.business.dto.FinPagoDTO;
-import com.restapi.siscondominio.financiero.business.dto.FinReciboDTO;
-import com.restapi.siscondominio.financiero.business.dto.RegistroPagosDTO;
+import com.restapi.siscondominio.financiero.business.dto.*;
 import com.restapi.siscondominio.financiero.business.exceptions.IncorrectValueException;
 import com.restapi.siscondominio.financiero.business.exceptions.ResourceNotFoundException;
 import com.restapi.siscondominio.financiero.business.speficications.FinReciboSpecification;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoVO;
+import com.restapi.siscondominio.financiero.business.vo.FinPagoComunVO;
+import com.restapi.siscondominio.financiero.business.vo.FinPagoDiferidoVO;
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeuda;
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeudaPago;
 import com.restapi.siscondominio.financiero.persistence.entities.FinPago;
@@ -63,11 +61,70 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         return toDTO(original);
     }
 
-    public Long save(FinPagoVO vO) {
-        FinPago bean = new FinPago();
-        BeanUtils.copyProperties(vO, bean);
-        bean = finPagoRepository.save(bean);
-        return bean.getPagId();
+    public List<FinDeudaPago> pagarDiferido(String cedulaInquilino, @NotNull FinPagoDiferidoVO requestBody)
+            throws Exception {
+
+        List<FinDeuda> deudasPendientes = findDeudasByInquilino(cedulaInquilino);
+        if (requestBody.getPagValor().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IncorrectValueException("El valor ingresado no es valido");
+        }
+        BigDecimal dineroDisponible = requestBody.getPagValor();
+        FinPago pagoRealizado;
+        List<FinDeudaPago> detalles = new ArrayList<>();
+        try {
+            // Se guarda el pago agregando la fecha actual
+            pagoRealizado = guardarPago(requestBody);
+            for (FinDeuda deuda : deudasPendientes) {
+                dineroDisponible = dineroDisponible.subtract(deuda.getDeuSaldo());
+                //Se crea los registros en la tabla intermedia deuda_pago
+
+                //Actualizacion a los valores de saldo y estado de la deuda
+                if (dineroDisponible.compareTo(BigDecimal.ZERO) <= 0) {
+                    detalles.add(guardarDeudaPago(pagoRealizado, deuda, dineroDisponible.add(deuda.getDeuSaldo())));
+                    deuda.setDeuSaldo(dineroDisponible.abs());
+                    deuda.setDeuCancelado(dineroDisponible.equals(new BigDecimal("0.000")));
+                    finDeudaRepository.save(deuda);
+                    break;
+                } else {
+                    detalles.add(guardarDeudaPago(pagoRealizado, deuda, deuda.getDeuSaldo()));
+                    deuda.setDeuSaldo(new BigDecimal("0.000"));
+                    deuda.setDeuCancelado(true);
+                    finDeudaRepository.save(deuda);
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception("¡Se ha presentado un error inesperado!");
+        }
+        return detalles;
+    }
+
+    public FinReciboDTO crearPagoDiferido(@NotNull FinPagoDiferidoVO requestBody) throws Exception {
+        FinPago pago = pagarDiferido(requestBody.getUsuCedula(), requestBody).get(0).getPag();
+        return getReciboByPago(pago.getPagId());
+    }
+
+    public FinReciboDTO crearPagoComun(FinPagoComunVO requestBody) throws Exception {
+        FinDeuda deuda = finDeudaRepository.findById(requestBody.getDeuId())
+                .orElseThrow(() -> new ResourceNotFoundException("Deuda no encontrada: "
+                        + requestBody.getDeuId()));
+        FinPago pagoGuardado;
+        try{
+            pagoGuardado = finPagoRepository.save(FinPago.builder()
+                            .pagValor(deuda.getDeuSaldo())
+                            .pagFecha(LocalDate.now())
+                            .cedTesorero(requestBody.getCedTesorero())
+                            .build());
+            guardarDeudaPago(pagoGuardado, deuda, deuda.getDeuSaldo());
+
+            deuda.setDeuSaldo(BigDecimal.ZERO);
+            deuda.setDeuCancelado(true);
+
+            finDeudaRepository.save(deuda);
+
+        } catch (Exception e){
+            throw new Exception("¡Se ha presentado un error inesperado!");
+        }
+        return getReciboByPago(pagoGuardado.getPagId());
     }
 
     public List<FinDeuda> findDeudasByInquilino(String cedulaInquilino) throws ResourceNotFoundException {
@@ -82,63 +139,21 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         return deudas;
     }
 
-    public FinPago guardarPago(FinPagoVO pago) {
+    public FinPago guardarPago(FinPagoDiferidoVO pago) {
         FinPago bean = new FinPago();
         BeanUtils.copyProperties(pago, bean);
         bean.setPagFecha(LocalDate.now());
         return finPagoRepository.save(bean);
     }
 
-    private void guardarDeudaPago(FinPago pagoRealizado, FinDeuda deuda, BigDecimal deuSaldo) {
+    private FinDeudaPago guardarDeudaPago(FinPago pagoRealizado, FinDeuda deuda, BigDecimal valorPagado) {
         FinDeudaPago detalle = FinDeudaPago.builder()
                 .pag(pagoRealizado)
                 .deu(deuda)
-                .depValorPagado(deuSaldo)
+                .depValorPagado(valorPagado)
                 .build();
-        finDeudaPagoRepository.save(detalle);
+        return finDeudaPagoRepository.save(detalle);
     }
-
-    public List<FinDeuda> pagarDiferido(String cedulaInquilino, @NotNull FinPagoVO requestBody)
-            throws Exception {
-
-        List<FinDeuda> deudasPendientes = findDeudasByInquilino(cedulaInquilino);
-        if (requestBody.getPagValor().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IncorrectValueException("El valor ingresado no es valido");
-        }
-        BigDecimal dineroDisponible = requestBody.getPagValor();
-        List<FinDeuda> deudasPagadas = new ArrayList<>();
-
-        try {
-            // Se guarda el pago agregando la fecha actual
-            FinPago pagoRealizado = guardarPago(requestBody);
-            for (FinDeuda deuda : deudasPendientes) {
-                dineroDisponible = dineroDisponible.subtract(deuda.getDeuSaldo());
-                //Se crea los registros en la tabla intermedia deuda_pago
-
-                //Actualizacion a los valores de saldo y estado de la deuda
-                if (dineroDisponible.compareTo(BigDecimal.ZERO) <= 0) {
-                    guardarDeudaPago(pagoRealizado, deuda, dineroDisponible.add(deuda.getDeuSaldo()));
-                    deuda.setDeuSaldo(dineroDisponible.abs());
-                    deuda.setDeuCancelado(dineroDisponible.equals(new BigDecimal("0.000")));
-                    deudasPagadas.add(finDeudaRepository.save(deuda));
-                    break;
-                } else {
-                    guardarDeudaPago(pagoRealizado, deuda, deuda.getDeuSaldo());
-                    deuda.setDeuSaldo(new BigDecimal("0.000"));
-                    deuda.setDeuCancelado(true);
-                    deudasPagadas.add(finDeudaRepository.save(deuda));
-                }
-            }
-        } catch (Exception e) {
-            throw new Exception("¡Se ha presentado un error inesperado!");
-        }
-        return deudasPagadas;
-    }
-
-    public List<FinDeudaDTO> crearPago(String cedulaInquilino, @NotNull FinPagoVO requestBody) throws Exception {
-        return finDeudaService.toListDTO(pagarDiferido(cedulaInquilino, requestBody));
-    }
-
 
     public FinReciboDTO getReciboByPago(long pagoId) {
         //Se consulta la informacion del recibo de la vista fin_recibo
