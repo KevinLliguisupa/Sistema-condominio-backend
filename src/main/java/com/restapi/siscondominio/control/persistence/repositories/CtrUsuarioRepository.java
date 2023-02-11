@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CtrUsuarioRepository extends JpaRepository<CtrUsuario, String>, JpaSpecificationExecutor<CtrUsuario> {
     Optional<CtrUsuario> findOneByusuCedula(String usuCedula);
+    CtrUsuario findByUsuCedula(String usuCedula);
 
 
 

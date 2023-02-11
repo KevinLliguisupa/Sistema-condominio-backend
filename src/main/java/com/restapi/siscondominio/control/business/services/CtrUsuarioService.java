@@ -1,15 +1,11 @@
 package com.restapi.siscondominio.control.business.services;
 
-import com.restapi.siscondominio.control.business.dto.CtrAnuncioDTO;
 import com.restapi.siscondominio.control.business.dto.CtrUsuarioDTO;
 import com.restapi.siscondominio.control.business.dto.CtrUsuarioInfoDTO;
 import com.restapi.siscondominio.control.business.exeption.DuplicatedException;
 import com.restapi.siscondominio.control.business.specification.CtrUsuarioSpecification;
-import com.restapi.siscondominio.control.business.vo.CtrUsuarioQueryVO;
 import com.restapi.siscondominio.control.business.vo.CtrUsuarioUpdateVO;
 import com.restapi.siscondominio.control.business.vo.CtrUsuarioVO;
-import com.restapi.siscondominio.control.persistence.entities.CtrAnuncio;
-import com.restapi.siscondominio.control.persistence.entities.CtrTipoAnuncio;
 import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import com.restapi.siscondominio.control.persistence.repositories.CtrCasaRepository;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
@@ -23,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class CtrUsuarioService {
@@ -171,6 +168,25 @@ public class CtrUsuarioService {
     protected CtrUsuario requireOne(String id) {
         return ctrUsuarioRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User id not found: " + id));
+    }
+
+    private CtrUsuarioDTO toUsuarioDTO (CtrUsuario ctrUsuario){
+        CtrUsuarioDTO usuarioDTO = new CtrUsuarioDTO();
+        usuarioDTO.setUsuCedula(ctrUsuario.getUsuCedula());
+        usuarioDTO.setUsuApellidos(ctrUsuario.getUsuApellidos());
+        usuarioDTO.setUsuNombres(ctrUsuario.getUsuNombres());
+        usuarioDTO.setUsuCorreo(ctrUsuario.getUsuCorreo());
+        usuarioDTO.setUsuTelefono(ctrUsuario.getUsuTelefono());
+        usuarioDTO.setUsuClave(ctrUsuario.getUsuClave());
+        usuarioDTO.setUsuEstado(ctrUsuario.getUsuEstado());
+
+        return usuarioDTO;
+
+    }
+
+    public CtrUsuarioDTO getById(String id) {
+        CtrUsuario original = requireOne(id);
+        return toDTO(original);
     }
 
 

@@ -1,10 +1,12 @@
 package com.restapi.siscondominio.control.business.services;
 
-import com.restapi.siscondominio.control.business.dto.CtrAnuncioDTO;
 import com.restapi.siscondominio.control.business.dto.CtrReservacionDTO;
-import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
-import com.restapi.siscondominio.control.business.vo.*;
-import com.restapi.siscondominio.control.persistence.entities.*;
+import com.restapi.siscondominio.control.business.vo.CtrReservacionQueryVO;
+import com.restapi.siscondominio.control.business.vo.CtrReservacionUpdateVO;
+import com.restapi.siscondominio.control.business.vo.CtrReservacionVO;
+import com.restapi.siscondominio.control.persistence.entities.CtrLugar;
+import com.restapi.siscondominio.control.persistence.entities.CtrReservacion;
+import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import com.restapi.siscondominio.control.persistence.repositories.CtrLugarRepository;
 import com.restapi.siscondominio.control.persistence.repositories.CtrReservacionRepository;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
@@ -15,7 +17,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,7 +72,7 @@ public class CtrReservacionService {
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
     }
 
-    private CtrReservacionDTO toReservacionDTO(CtrReservacion reservacion){
+    private CtrReservacionDTO toReservacionDTO(CtrReservacion reservacion) {
         CtrReservacionDTO reservacionDTO = new CtrReservacionDTO();
         reservacionDTO.setResId(reservacion.getResId());
         reservacionDTO.setLugId(reservacion.getLug().getLugId());
@@ -80,7 +87,7 @@ public class CtrReservacionService {
 
     //Guardar Reservaciones
     public CtrReservacionDTO guardarReservacion(CtrReservacionVO reservacionVO, String cedula, Long idLugar) {
-        LocalDate fechaActual = LocalDate.now();
+        OffsetDateTime fechaActual = OffsetDateTime.of(LocalDate.now(), LocalTime.NOON, ZoneOffset.UTC);
         try {
 
             // Buscar el usuario en la base de datos
@@ -88,7 +95,7 @@ public class CtrReservacionService {
                     .orElseThrow(() -> new IllegalArgumentException("El usuario con cédula " + cedula + " no existe"));
             // Buscar el lugar en la base de datos
             CtrLugar lugar = ctrLugarRepository.findById(idLugar)
-                    .orElseThrow(() -> new IllegalArgumentException("El lugar con ID " + idLugar+ " no existe"));
+                    .orElseThrow(() -> new IllegalArgumentException("El lugar con ID " + idLugar + " no existe"));
             if (reservacionVO.getResFecha().isBefore(fechaActual)) {
                 throw new IllegalArgumentException("La fecha de reservación debe ser igual o mayor a la fecha actual");
             }
@@ -103,7 +110,6 @@ public class CtrReservacionService {
             if (reservacionPrevias.isPresent()) {
                 throw new IllegalArgumentException("El lugar ya se encutra reservado");
             }
-
 
 
             // Crear una nueva entidad CtrAnuncio
@@ -124,12 +130,13 @@ public class CtrReservacionService {
             throw e;
         }
     }
+
     //Actulizar Reservaciones
     public CtrReservacionDTO actualizarReservacion(Long id, CtrReservacionUpdateVO reservacionVO, Long IdLugar) {
-        LocalDate fechaActual = LocalDate.now();
+        OffsetDateTime fechaActual = OffsetDateTime.of(LocalDate.now(), LocalTime.NOON, ZoneOffset.UTC);
         try {
             // Buscar el anuncio en la base de datos
-            CtrReservacion reservacion  = ctrReservacionRepository.findById(id)
+            CtrReservacion reservacion = ctrReservacionRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("La reservación con ID " + id + " no existe"));
             // Buscar el tipo de anuncio en la base de datos
             CtrLugar lugar = ctrLugarRepository.findById(IdLugar)
@@ -163,12 +170,13 @@ public class CtrReservacionService {
             throw e;
         }
     }
+
     //Aprobación de reservaciones
     public CtrReservacionDTO actualizarReserEstado(Long id) {
         LocalDate fechaActual = LocalDate.now();
         try {
             // Buscar el anuncio en la base de datos
-            CtrReservacion reservacion  = ctrReservacionRepository.findById(id)
+            CtrReservacion reservacion = ctrReservacionRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("La reservación con ID " + id + " no existe"));
 
             //Actulizar el estado
@@ -181,12 +189,13 @@ public class CtrReservacionService {
             throw e;
         }
     }
+
     //Eliminar  reservacion Log
     public CtrReservacionDTO EliminarReserEstado(Long id) {
         LocalDate fechaActual = LocalDate.now();
         try {
             // Buscar el anuncio en la base de datos
-            CtrReservacion reservacion  = ctrReservacionRepository.findById(id)
+            CtrReservacion reservacion = ctrReservacionRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("La reservación con ID " + id + " no existe"));
 
             //Actulizar el estado
@@ -205,6 +214,7 @@ public class CtrReservacionService {
         return toReservacionDTO(ctrReservacionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró la reservación con id: " + id)));
     }
+
     //Listar todas las reuniones
     public List<CtrReservacionDTO> findAll() {
         return ctrReservacionRepository.findAll().stream().map(this::toReservacionDTO).collect(Collectors.toList());
@@ -218,8 +228,6 @@ public class CtrReservacionService {
         reservacions.sort(Comparator.comparing(CtrReservacion::getResFecha).reversed());
         return reservacions.stream().map(this::toReservacionDTO).collect(Collectors.toList());
     }
-
-
 
 
 }

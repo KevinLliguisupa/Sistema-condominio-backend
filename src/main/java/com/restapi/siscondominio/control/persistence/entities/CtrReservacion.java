@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -29,7 +28,7 @@ public class CtrReservacion {
     private CtrUsuario usuCedula;
 
     @Column(name = "res_fecha")
-    private LocalDate resFecha;
+    private OffsetDateTime resFecha;
 
     @NotNull
     @Column(name = "res_hora_inicio", nullable = false)

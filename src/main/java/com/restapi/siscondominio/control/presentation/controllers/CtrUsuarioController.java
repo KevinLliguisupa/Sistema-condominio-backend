@@ -1,16 +1,11 @@
 package com.restapi.siscondominio.control.presentation.controllers;
 
-import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
-import com.restapi.siscondominio.control.business.dto.CtrUsuarioDTO;
-
 import com.restapi.siscondominio.control.business.exeption.DuplicatedException;
 import com.restapi.siscondominio.control.business.services.CtrUsuarioService;
-import com.restapi.siscondominio.control.business.vo.CtrUsuarioQueryVO;
 import com.restapi.siscondominio.control.business.vo.CtrUsuarioUpdateVO;
 import com.restapi.siscondominio.control.business.vo.CtrUsuarioVO;
 import com.restapi.siscondominio.control.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
 
@@ -102,12 +96,6 @@ public class CtrUsuarioController {
             return ResponseHandler.generateResponse("¡Error no fue posible actualizar el recurso!",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-
-    @GetMapping
-    public Page<CtrUsuarioDTO> query(@Valid CtrUsuarioQueryVO vO) {
-        return ctrUsuarioService.query(vO);
     }
 
 

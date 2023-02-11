@@ -6,8 +6,6 @@ import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
 @Data
@@ -20,12 +18,12 @@ public class CtrReservacionUpdateVO extends CtrReservacionVO implements Serializ
     @NotNull(message = "lugId can not null")
     private Long lugId;
     @NotNull(message = "lugId can not null")
-    private LocalDate resFecha;
+    private OffsetDateTime resFecha;
 
     @NotNull(message = "resHoraInicio can not null")
-    private LocalTime resHoraInicio;
+    private OffsetDateTime resHoraInicio;
 
     @NotNull(message = "resHoraFin can not null")
-    private LocalTime resHoraFin;
+    private OffsetDateTime resHoraFin;
 
 }
