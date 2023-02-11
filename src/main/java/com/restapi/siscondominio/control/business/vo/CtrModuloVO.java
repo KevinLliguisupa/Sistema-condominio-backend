@@ -10,8 +10,6 @@ import java.io.Serializable;
 public class CtrModuloVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "modId can not null")
-    private Long modId;
 
     @NotNull(message = "modNombre can not null")
     private String modNombre;

@@ -10,8 +10,6 @@ import java.io.Serializable;
 public class CtrAsignacionVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @NotNull(message = "asgId can not null")
-    private Long asgId;
 
     @NotNull(message = "prfId can not null")
     private Long prfId;

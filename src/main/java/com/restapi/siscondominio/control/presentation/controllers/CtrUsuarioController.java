@@ -1,17 +1,20 @@
 package com.restapi.siscondominio.control.presentation.controllers;
 
+import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
 import com.restapi.siscondominio.control.business.dto.CtrUsuarioDTO;
 import com.restapi.siscondominio.control.business.services.CtrUsuarioService;
-import com.restapi.siscondominio.control.business.vo.CtrUsuarioQueryVO;
-import com.restapi.siscondominio.control.business.vo.CtrUsuarioUpdateVO;
-import com.restapi.siscondominio.control.business.vo.CtrUsuarioVO;
+import com.restapi.siscondominio.control.business.vo.*;
+import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Validated
 @RestController
@@ -22,28 +25,60 @@ public class CtrUsuarioController {
     private CtrUsuarioService ctrUsuarioService;
 
     @PostMapping
-    public String save(@Valid @RequestBody CtrUsuarioVO vO) {
-        return ctrUsuarioService.save(vO).toString();
-    }
+    public ResponseEntity<Object> save(@Valid @RequestBody CtrUsuarioVO usuarioVO){
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") String id) {
-        ctrUsuarioService.delete(id);
-    }
+        try {
 
-    @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") String id,
-                       @Valid @RequestBody CtrUsuarioUpdateVO vO) {
-        ctrUsuarioService.update(id, vO);
-    }
+            return ResponseEntity.status(HttpStatus.CREATED).body(ctrUsuarioService.guardarUsuario(usuarioVO));
 
-    @GetMapping("/{id}")
-    public CtrUsuarioDTO getById(@Valid @NotNull @PathVariable("id") String id) {
-        return ctrUsuarioService.getById(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario: "+ e.getMessage());
+        }
     }
 
     @GetMapping
-    public Page<CtrUsuarioDTO> query(@Valid CtrUsuarioQueryVO vO) {
-        return ctrUsuarioService.query(vO);
+    public ResponseEntity<List<CtrUsuarioDTO>> findAllOrderDec() {
+        return ResponseEntity.ok(ctrUsuarioService.findAllOrderDec());
     }
+
+    @PutMapping
+    public ResponseEntity<Object> actualizarUsuario( @RequestBody CtrUsuarioUpdateVO usuarioUpdateVO) {
+
+        try {
+            CtrUsuarioDTO usuarioDTO = ctrUsuarioService.actualizarUsuario( usuarioUpdateVO);
+            return ResponseEntity.ok().body(usuarioDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+    @PutMapping("/cedula/{id}")
+    public ResponseEntity<?> EliminarUsuarioLog(@Valid @NotNull @PathVariable("id") String cedula) {
+        try {
+            ctrUsuarioService.eliminarUsuario(cedula);
+            return ResponseEntity.status(HttpStatus.OK).body("Usuario eliminado correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la usuario: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/activar/{id}")
+    public ResponseEntity<?> ActivarUsuarioLog(@Valid @NotNull @PathVariable("id") String cedula) {
+        try {
+            ctrUsuarioService.activarUsuario(cedula);
+            return ResponseEntity.status(HttpStatus.OK).body("Usuario activado correctamente");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al activar el Usuario: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }

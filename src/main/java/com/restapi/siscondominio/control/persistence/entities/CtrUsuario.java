@@ -14,7 +14,6 @@ import java.util.Set;
 @Table(name = "ctr_usuario")
 public class CtrUsuario implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usu_cedula", nullable = false, length = 10)
     private String usuCedula;
 

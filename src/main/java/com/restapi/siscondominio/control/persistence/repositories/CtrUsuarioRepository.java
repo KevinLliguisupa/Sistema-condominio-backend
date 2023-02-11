@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface CtrUsuarioRepository extends JpaRepository<CtrUsuario, String>, JpaSpecificationExecutor<CtrUsuario> {
-
+    CtrUsuario findByUsuCedula(String usuCedula);
 }
