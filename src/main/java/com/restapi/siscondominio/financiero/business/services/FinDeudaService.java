@@ -14,11 +14,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
-public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO>{
+public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO> {
 
     @Autowired
     private FinDeudaRepository finDeudaRepository;
@@ -47,7 +52,7 @@ public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO>{
         return toPageDTO(finDeudaRepository.findAll(hasUser, PageRequest.of(page, size, sorter)));
     }
 
-    public List<FinDeudaDTO>  getByUser(String cedulaUsuario) {
+    public List<FinDeudaDTO> getByUser(String cedulaUsuario) {
         Specification<FinDeuda> hasUser = Specification.where(FinDeudaSpecification.hasUser(cedulaUsuario));
         Sort byFecha = Sort.by("deuFechaCorte").descending();
         Sort sorter = Sort.by("deuCancelado").and(byFecha);
@@ -110,5 +115,34 @@ public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO>{
     private FinDeuda requireOne(Long id) {
         return finDeudaRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+    }
+
+    public Map<String, BigDecimal> getValorDeuda(String cedulaUsuario) {
+        List<FinDeudaDTO> deudas = getDeudasByInquilino(cedulaUsuario);
+        BigDecimal valorAdeudado = BigDecimal.ZERO;
+        for (FinDeudaDTO deuda : deudas) {
+            valorAdeudado = valorAdeudado.add(deuda.getDeuSaldo());
+        }
+
+        Map<String, BigDecimal> map = new HashMap<>();
+        map.put("valorAdeudado", valorAdeudado);
+
+        return map;
+    }
+
+    public Map<String, Object> getProximaDeuda(String cedulaUsuario) {
+        List<FinDeudaDTO> deudas = getDeudasByInquilino(cedulaUsuario);
+        LocalDate fechaActual = LocalDate.now();
+        Map<String, Object> map = new HashMap<>();
+
+        if (deudas.size() != 0 && fechaActual.getDayOfMonth() < 5) {
+            map.put("fecha", LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 5));
+            map.put("tipoDeuda", "Multa");
+
+        } else {
+            map.put("fecha", fechaActual.with(TemporalAdjusters.firstDayOfNextMonth()));
+            map.put("tipoDeuda", "Alícuota");
+        }
+        return map;
     }
 }

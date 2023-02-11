@@ -81,4 +81,26 @@ public class FinDeudaController {
                     HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("usuario/{id}/adeudado")
+    public ResponseEntity<Object> getvalorDeudaByUsuario(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getValorDeuda(cedulaUsuario));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("usuario/{id}/proxima")
+    public ResponseEntity<Object> getPoximaDeuda(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getProximaDeuda(cedulaUsuario));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 }
