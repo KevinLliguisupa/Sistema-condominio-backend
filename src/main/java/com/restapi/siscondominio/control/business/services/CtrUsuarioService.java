@@ -109,7 +109,7 @@ public class CtrUsuarioService {
         throw new UnsupportedOperationException();
     }
 
-    private CtrUsuarioDTO toDTO(CtrUsuario original) {
+    protected CtrUsuarioDTO toDTO(CtrUsuario original) {
         CtrUsuarioDTO bean = new CtrUsuarioDTO();
         BeanUtils.copyProperties(original, bean);
         return bean;
@@ -120,7 +120,7 @@ public class CtrUsuarioService {
         return ctrUsuarioRepository.findOne(specification)
                 .orElse(null);
     }
-    private CtrUsuario requireOne(String id) {
+    protected CtrUsuario requireOne(String id) {
         return ctrUsuarioRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User id not found: " + id));
     }
