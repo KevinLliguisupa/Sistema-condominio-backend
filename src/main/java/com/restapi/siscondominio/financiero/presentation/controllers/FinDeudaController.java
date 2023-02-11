@@ -1,12 +1,10 @@
 package com.restapi.siscondominio.financiero.presentation.controllers;
 
-import com.restapi.siscondominio.financiero.business.dto.FinDeudaDTO;
 import com.restapi.siscondominio.financiero.business.services.FinDeudaService;
-import com.restapi.siscondominio.financiero.business.vo.FinDeudaQueryVO;
-import com.restapi.siscondominio.financiero.business.vo.FinDeudaUpdateVO;
-import com.restapi.siscondominio.financiero.business.vo.FinDeudaVO;
+import com.restapi.siscondominio.financiero.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,35 +13,94 @@ import javax.validation.constraints.NotNull;
 
 @Validated
 @RestController
-@RequestMapping("/financiero/deuda")
+@RequestMapping("/financiero/cobros/deudas")
 public class FinDeudaController {
 
     @Autowired
     private FinDeudaService finDeudaService;
 
-    @PostMapping
-    public String save(@Valid @RequestBody FinDeudaVO vO) {
-        return finDeudaService.save(vO).toString();
+    @GetMapping
+    public ResponseEntity<Object> getAll(
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getAll(size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getAll());
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        finDeudaService.delete(id);
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<Object> getByUsuario(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario,
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getByUser(cedulaUsuario, size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getByUser(cedulaUsuario));
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") Long id,
-                       @Valid @RequestBody FinDeudaUpdateVO vO) {
-        finDeudaService.update(id, vO);
+    @GetMapping("usuario/{id}/pendientes")
+    public ResponseEntity<Object> getDeudasByUsuario(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario,
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getDeudasByInquilino(cedulaUsuario, size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getDeudasByInquilino(cedulaUsuario));
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/{id}")
-    public FinDeudaDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
-        return finDeudaService.getById(id);
+    public ResponseEntity<Object> getById(@Valid @NotNull @PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getById(id));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse(e.getMessage(),
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @GetMapping
-    public Page<FinDeudaDTO> query(@Valid FinDeudaQueryVO vO) {
-        return finDeudaService.query(vO);
+    @GetMapping("usuario/{id}/adeudado")
+    public ResponseEntity<Object> getvalorDeudaByUsuario(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getValorDeuda(cedulaUsuario));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("usuario/{id}/proxima")
+    public ResponseEntity<Object> getPoximaDeuda(
+            @Valid @NotNull @PathVariable("id") String cedulaUsuario) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finDeudaService.getProximaDeuda(cedulaUsuario));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
     }
 }

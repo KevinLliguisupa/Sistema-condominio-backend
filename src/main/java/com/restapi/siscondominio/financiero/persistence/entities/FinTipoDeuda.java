@@ -21,7 +21,7 @@ public class FinTipoDeuda implements Serializable {
     @Column(name = "tde_nombre", nullable = false)
     private String tdeNombre;
 
-    @OneToMany(mappedBy = "tde")
+    @OneToMany(mappedBy = "tipoDeuda")
     private Set<FinMonto> finMontos = new LinkedHashSet<>();
 
 }

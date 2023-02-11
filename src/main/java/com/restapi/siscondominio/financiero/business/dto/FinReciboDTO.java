@@ -1,6 +1,5 @@
 package com.restapi.siscondominio.financiero.business.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,24 +8,32 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FinDeudaDTO implements Serializable {
+public class FinReciboDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Long deuId;
+
 
     private String usuCedula;
 
-    private LocalDate deuFechaCorte;
+    private String usuApellidos;
 
-    private BigDecimal deuSaldo;
+    private String usuNombres;
 
-    private Boolean deuCancelado;
+    private String usuCorreo;
 
-    private FinMontoDTO monto;
+    private Long pagId;
 
+    private LocalDate pagFecha;
+
+    private BigDecimal pagValor;
+
+    private String cedTesorero;
+
+    private List<RegistroPagosDTO> detalles;
 
 }

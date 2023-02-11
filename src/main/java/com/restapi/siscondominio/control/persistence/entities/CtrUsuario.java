@@ -12,6 +12,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "ctr_usuario")
 public class CtrUsuario implements Serializable {
     @Id

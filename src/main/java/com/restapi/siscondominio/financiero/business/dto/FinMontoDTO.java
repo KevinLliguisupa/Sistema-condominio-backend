@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Data
 public class FinMontoDTO implements Serializable {
@@ -14,10 +15,10 @@ public class FinMontoDTO implements Serializable {
 
     private BigDecimal monValor;
 
-    private Date monFechaAsignacion;
+    private LocalDate monFechaAsignacion;
 
-    private Date monFechaFin;
+    private LocalDate monFechaFin;
 
-    private Long tdeId;
+    private FinTipoDeudaDTO tipoDeuda;
 
 }

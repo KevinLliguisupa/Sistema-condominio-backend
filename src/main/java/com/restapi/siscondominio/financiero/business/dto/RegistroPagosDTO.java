@@ -1,12 +1,10 @@
 package com.restapi.siscondominio.financiero.business.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,19 +12,17 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FinDeudaDTO implements Serializable {
+public class RegistroPagosDTO {
     private static final long serialVersionUID = 1L;
     private Long deuId;
 
-    private String usuCedula;
-
     private LocalDate deuFechaCorte;
 
-    private BigDecimal deuSaldo;
+    private String tdeNombre;
 
-    private Boolean deuCancelado;
+    private BigDecimal recValorAdeudado;
 
-    private FinMontoDTO monto;
+    private BigDecimal depValorPagado;
 
-
+    private BigDecimal recSaldo;
 }

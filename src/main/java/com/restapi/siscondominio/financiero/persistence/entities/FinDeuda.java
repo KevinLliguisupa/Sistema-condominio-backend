@@ -7,12 +7,15 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "fin_deuda")
 public class FinDeuda implements Serializable {
     @Id
@@ -31,13 +34,13 @@ public class FinDeuda implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "mon_id", nullable = false)
-    private FinMonto mon;
+    private FinMonto monto;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usu_cedula", nullable = false)
     private CtrUsuario usuCedula;
 
     @OneToMany(mappedBy = "deu")
-    private Set<FinDeudaPago> finDeudaPagos = new LinkedHashSet<>();
+    private List<FinDeudaPago> finDeudaPagos = new ArrayList<>();
 
 }
