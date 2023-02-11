@@ -1,8 +1,7 @@
 package com.restapi.siscondominio.control.persistence.entities;
 
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeuda;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
