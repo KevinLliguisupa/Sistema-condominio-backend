@@ -2,9 +2,13 @@ package com.restapi.siscondominio.control.presentation.controllers;
 
 import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
 import com.restapi.siscondominio.control.business.dto.CtrUsuarioDTO;
+
+import com.restapi.siscondominio.control.business.exeption.DuplicatedException;
 import com.restapi.siscondominio.control.business.services.CtrUsuarioService;
-import com.restapi.siscondominio.control.business.vo.*;
-import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
+import com.restapi.siscondominio.control.business.vo.CtrUsuarioQueryVO;
+import com.restapi.siscondominio.control.business.vo.CtrUsuarioUpdateVO;
+import com.restapi.siscondominio.control.business.vo.CtrUsuarioVO;
+import com.restapi.siscondominio.control.presentation.utils.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,60 +20,94 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+
+ * esta clase contiene los controladores de usuario
+ * @author: dilanGhost33
+ * @version: 2023
+ * @see: uses dto and vo of user
+ */
+
 @Validated
 @RestController
 @RequestMapping("/control/usuario")
 public class CtrUsuarioController {
 
+
     @Autowired
     private CtrUsuarioService ctrUsuarioService;
 
     @PostMapping
-    public ResponseEntity<Object> save(@Valid @RequestBody CtrUsuarioVO usuarioVO){
-
+    public ResponseEntity<Object> save(@Valid @RequestBody CtrUsuarioVO vO) {
         try {
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(ctrUsuarioService.guardarUsuario(usuarioVO));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario: "+ e.getMessage());
-        }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CtrUsuarioDTO>> findAllOrderDec() {
-        return ResponseEntity.ok(ctrUsuarioService.findAllOrderDec());
-    }
-
-    @PutMapping
-    public ResponseEntity<Object> actualizarUsuario( @RequestBody CtrUsuarioUpdateVO usuarioUpdateVO) {
-
-        try {
-            CtrUsuarioDTO usuarioDTO = ctrUsuarioService.actualizarUsuario( usuarioUpdateVO);
-            return ResponseEntity.ok().body(usuarioDTO);
-
-        } catch (Exception e) {
+            System.out.println(vO.getUsuCedula());
+            return ResponseEntity.status(HttpStatus.CREATED).body(ctrUsuarioService.save(vO));
+        } catch (DuplicatedException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+
     }
-    @PutMapping("/cedula/{id}")
-    public ResponseEntity<?> EliminarUsuarioLog(@Valid @NotNull @PathVariable("id") String cedula) {
-        try {
-            ctrUsuarioService.eliminarUsuario(cedula);
-            return ResponseEntity.status(HttpStatus.OK).body("Usuario eliminado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la usuario: " + e.getMessage());
+
+    @GetMapping("/all")
+    public ResponseEntity<Object> getUsers(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "false") Boolean enablePagination,
+            @RequestParam(required = false) Boolean usrState) {
+        try{
+            return ResponseEntity.status(HttpStatus.OK).body(ctrUsuarioService.getCtrUsuarios(page, size, enablePagination));
+        }catch (Exception e){
+            return  ResponseHandler.generateResponse("Informacion no entontrada"+e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/activar/{id}")
-    public ResponseEntity<?> ActivarUsuarioLog(@Valid @NotNull @PathVariable("id") String cedula) {
+    //@DeleteMapping("/{id}")
+    //public void delete(@Valid @NotNull @PathVariable("id") String id) {
+    //  ctrUsuarioService.delete(id);
+    //}
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> update(@Valid @NotNull @PathVariable("id") String id,
+                       @Valid @RequestBody CtrUsuarioUpdateVO vO) {
         try {
-            ctrUsuarioService.activarUsuario(cedula);
-            return ResponseEntity.status(HttpStatus.OK).body("Usuario activado correctamente");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al activar el Usuario: " + e.getMessage());
+
+            return ResponseHandler.generateResponse("Parametros actualizado",
+                    HttpStatus.CREATED, ctrUsuarioService.update(id, vO)) ;
+        }catch (Exception e){
+            return ResponseHandler.generateResponse("¡Error no fue posible actualizar el recurso!",
+                    HttpStatus.INTERNAL_SERVER_ERROR) ;
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@Valid @NotNull @PathVariable("id") String id) {
+        try{
+
+            return ResponseHandler.generateResponse("Encontrado  "+id,
+                    HttpStatus.CREATED,ctrUsuarioService.getById(id));
+        }catch (Exception e){
+            return ResponseHandler.generateResponse(e.getMessage(),
+                    HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+    @PutMapping("/state/{id}")
+    public ResponseEntity<Object> changeState(@Valid @NotNull @PathVariable("id") String id) {
+        try{
+            ;
+            return ResponseHandler.generateResponse("Parametro actualizado",
+                    HttpStatus.CREATED,ctrUsuarioService.changeState(id)) ;
+        }catch (Exception e){
+            return ResponseHandler.generateResponse("¡Error no fue posible actualizar el recurso!",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping
+    public Page<CtrUsuarioDTO> query(@Valid CtrUsuarioQueryVO vO) {
+        return ctrUsuarioService.query(vO);
     }
 
 
