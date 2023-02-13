@@ -4,7 +4,10 @@ package com.restapi.siscondominio.control.business.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 @Data
 public class CtrReservacionDTO implements Serializable {
@@ -15,11 +18,11 @@ public class CtrReservacionDTO implements Serializable {
 
     private String usuCedula;
 
-    private OffsetDateTime resFecha;
+    private LocalDate resFecha;
 
-    private OffsetDateTime resHoraInicio;
+    private LocalTime resHoraInicio;
 
-    private OffsetDateTime resHoraFin;
+    private LocalTime resHoraFin;
 
     private Boolean resAprobado;
 

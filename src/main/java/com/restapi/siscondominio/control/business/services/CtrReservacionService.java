@@ -87,7 +87,7 @@ public class CtrReservacionService {
 
     //Guardar Reservaciones
     public CtrReservacionDTO guardarReservacion(CtrReservacionVO reservacionVO, String cedula, Long idLugar) {
-        OffsetDateTime fechaActual = OffsetDateTime.of(LocalDate.now(), LocalTime.NOON, ZoneOffset.UTC);
+        LocalDate fechaActual = LocalDate.now();
         try {
 
             // Buscar el usuario en la base de datos
@@ -133,7 +133,7 @@ public class CtrReservacionService {
 
     //Actulizar Reservaciones
     public CtrReservacionDTO actualizarReservacion(Long id, CtrReservacionUpdateVO reservacionVO, Long IdLugar) {
-        OffsetDateTime fechaActual = OffsetDateTime.of(LocalDate.now(), LocalTime.NOON, ZoneOffset.UTC);
+        LocalDate fechaActual = LocalDate.now();
         try {
             // Buscar el anuncio en la base de datos
             CtrReservacion reservacion = ctrReservacionRepository.findById(id)
@@ -225,7 +225,7 @@ public class CtrReservacionService {
         LocalDate fechaActual = LocalDate.now();
         List<CtrReservacion> reservacions = ctrReservacionRepository.findAll();
         reservacions = reservacions.stream().filter(reservacion -> reservacion.getResActiva().equals(true)).collect(Collectors.toList());
-        reservacions.sort(Comparator.comparing(CtrReservacion::getResFecha).reversed());
+        reservacions.sort(Comparator.comparing(CtrReservacion::getResId).reversed());
         return reservacions.stream().map(this::toReservacionDTO).collect(Collectors.toList());
     }
 
