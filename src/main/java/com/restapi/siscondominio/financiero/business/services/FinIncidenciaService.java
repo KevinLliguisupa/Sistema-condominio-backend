@@ -3,14 +3,16 @@ package com.restapi.siscondominio.financiero.business.services;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.financiero.business.dto.FinIncidenciaDTO;
 import com.restapi.siscondominio.financiero.business.vo.*;
+import com.restapi.siscondominio.financiero.persistence.documents.evidenciaIncidenciasNoSolucionadasDocuments;
 import com.restapi.siscondominio.financiero.persistence.entities.FinGasto;
 import com.restapi.siscondominio.financiero.persistence.entities.FinIncidencia;
+import com.restapi.siscondominio.financiero.persistence.repositories.FinEvidenciaIncidenciaNoSolucionadasRepositoryMD;
+import com.restapi.siscondominio.financiero.persistence.repositories.FinEvidenciaIncidenciaSolucionadasRepositoryMD;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinIncidenciaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
+import  com.restapi.siscondominio.financiero.persistence.documents.evidenciaIncidenciaSolucionadaDocuments;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,11 +26,36 @@ public class FinIncidenciaService {
     @Autowired
     private CtrUsuarioRepository ctrUsuarioRepository;
 
+    @Autowired
+    private FinEvidenciaIncidenciaNoSolucionadasRepositoryMD finEvidenciaIncidenciaNoSolucionadasRepositoryMD;
 
+    @Autowired
+    private FinEvidenciaIncidenciaSolucionadasRepositoryMD finEvidenciaIncidenciaSolucionadasRepositoryMD;
+
+    private String saveEvidenciaIncidencia(String imagenBase64, Long idIncidencia){
+        String id="Incidencia_"+idIncidencia;
+        this.finEvidenciaIncidenciaNoSolucionadasRepositoryMD.save(new evidenciaIncidenciasNoSolucionadasDocuments(id,imagenBase64));
+        return id;
+    }
+    private String saveEvidenciaSolucion(String imagenBase64, Long idIncidencia){
+        String id="Solucion_"+idIncidencia;
+        this.finEvidenciaIncidenciaSolucionadasRepositoryMD.save(new evidenciaIncidenciaSolucionadaDocuments(id,imagenBase64));
+        return id;
+    }
+
+    private void updateEvidenciaIncidencia(String imagenBase64, String idImagen){
+        this. finEvidenciaIncidenciaNoSolucionadasRepositoryMD.save(new evidenciaIncidenciasNoSolucionadasDocuments(idImagen,imagenBase64));
+
+    }
+    private void updateEvidenciaSolucion(String imagenBase64, String idImagen){
+        this. finEvidenciaIncidenciaSolucionadasRepositoryMD.save(new evidenciaIncidenciaSolucionadaDocuments(idImagen,imagenBase64));
+
+    }
     public Long save(FinIncidenciaVO vO) {
         try{
             FinIncidencia bean = new FinIncidencia();
-            BeanUtils.copyProperties(vO, bean);
+            bean.setIncEvidenciaIndicencia("");
+            bean.setIncDescripcion(vO.getIncDescripcion());
             bean.setFinGastos(new ArrayList<FinGasto>());
             bean.setUsuCedula(ctrUsuarioRepository.getById(vO.getUsuCedula()));
             bean.setIncFechaReporte(new Date());
@@ -36,18 +63,39 @@ public class FinIncidenciaService {
             bean.setIncFechaSolucion(null);
             bean.setIncEvidenciaSolucion(null);
             bean = finIncidenciaRepository.save(bean);
-            return bean.getIncId();
+            Long id=bean.getIncId();
+
+            FinIncidenciaUpdateVO updateVO = new FinIncidenciaUpdateVO();
+            updateVO.setIncDescripcion(vO.getIncDescripcion());
+            updateVO.setIncEvidenciaIndicencia(this.saveEvidenciaIncidencia(vO.getIncEvidenciaIndicencia(),id));
+
+            this.update(id,updateVO);
+
+            return id;
         }catch (Exception e){
             return null;
         }
 
     }
 
-    public void update(Long id, FinIncidenciaUpdateVO vO) {
+    private void update(Long id, FinIncidenciaUpdateVO vO) {
         try{
             FinIncidencia bean = requireOne(id);
             BeanUtils.copyProperties(vO, bean);
             finIncidenciaRepository.save(bean);
+        }catch(Exception e){
+
+        }
+
+    }
+    public void updateIncidentNoSolution(Long id, FinIncidenciaUpdateVO vO) {
+        try{
+            FinIncidencia bean = requireOne(id);
+            BeanUtils.copyProperties(vO, bean);
+            bean.setIncEvidenciaIndicencia(this.finIncidenciaRepository.getById(id).getIncEvidenciaIndicencia());
+            finIncidenciaRepository.save(bean);
+            this.updateEvidenciaIncidencia(vO.getIncEvidenciaIndicencia(),this.finIncidenciaRepository.getById(id).getIncEvidenciaIndicencia());
+
         }catch(Exception e){
 
         }
@@ -58,7 +106,9 @@ public class FinIncidenciaService {
         try{
             FinIncidencia bean = requireOne(id);
             BeanUtils.copyProperties(vO, bean);
+            bean.setIncEvidenciaSolucion(this.finIncidenciaRepository.getById(id).getIncEvidenciaSolucion());
             finIncidenciaRepository.save(bean);
+            this.updateEvidenciaSolucion(vO.getIncEvidenciaSolucion(),this.finIncidenciaRepository.getById(id).getIncEvidenciaSolucion());
         }catch(Exception e){
 
         }
@@ -70,9 +120,11 @@ public class FinIncidenciaService {
         try{
             FinIncidencia bean = requireOne(id);
             BeanUtils.copyProperties(vO, bean);
+            bean.setIncEvidenciaSolucion(this.saveEvidenciaSolucion((vO.getIncEvidenciaSolucion()),id));
             bean.setIncFechaSolucion(new Date());
             bean.setIncSolucionada(true);
             finIncidenciaRepository.save(bean);
+
         }catch (Exception e){
 
         }
@@ -107,6 +159,7 @@ public class FinIncidenciaService {
                 listaIncidenciasDTO.add(new FinIncidenciaDTO(
                         incidencia.getIncId(),
                         incidencia.getUsuCedula().getUsuCedula(),
+                        this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuApellidos()+" "+this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuNombres(),
                         incidencia.getIncFechaReporte(),
                         incidencia.getIncDescripcion(),
                         incidencia.getIncEvidenciaIndicencia(),
@@ -132,6 +185,7 @@ public class FinIncidenciaService {
                     listaIncidenciasDTO.add(new FinIncidenciaDTO(
                             incidencia.getIncId(),
                             incidencia.getUsuCedula().getUsuCedula(),
+                            this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuApellidos()+" "+ this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuNombres(),
                             incidencia.getIncFechaReporte(),
                             incidencia.getIncDescripcion(),
                             incidencia.getIncEvidenciaIndicencia(),
@@ -160,6 +214,7 @@ public class FinIncidenciaService {
                     listaIncidenciasDTO.add(new FinIncidenciaDTO(
                             incidencia.getIncId(),
                             incidencia.getUsuCedula().getUsuCedula(),
+                            this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuApellidos()+" " +this.ctrUsuarioRepository.getById(incidencia.getUsuCedula().getUsuCedula()).getUsuNombres(),
                             incidencia.getIncFechaReporte(),
                             incidencia.getIncDescripcion(),
                             incidencia.getIncEvidenciaIndicencia(),
@@ -184,5 +239,13 @@ public class FinIncidenciaService {
         }catch (Exception e){
            return null;
         }
-        }
+    }
+
+    public List<evidenciaIncidenciasNoSolucionadasDocuments> getAllEvidenciasNoSolucionadas(){
+        return this.finEvidenciaIncidenciaNoSolucionadasRepositoryMD.findAll();
+    }
+
+    public  List<evidenciaIncidenciaSolucionadaDocuments> getAllEvidenciasSolucionadas(){
+        return this.finEvidenciaIncidenciaSolucionadasRepositoryMD.findAll();
+    }
 }

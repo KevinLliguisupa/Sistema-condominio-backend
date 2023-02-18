@@ -12,9 +12,6 @@ import java.util.Date;
 public class FinGastoVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    //@NotNull(message = "gasId can not null")
-    //private Long gasId;
-
     @NotNull(message = "tseId can not null")
     private Long tseId;
     @NotNull(message = "incId can not null")
@@ -24,9 +21,6 @@ public class FinGastoVO implements Serializable {
 
     @NotNull(message = "gasPago can not null")
     private BigDecimal gasPago;
-
-    //@NotNull(message = "gasFecha can not null")
-    //private Date gasFecha;
 
     @NotNull(message = "gasRecibo can not null")
     private String gasRecibo;

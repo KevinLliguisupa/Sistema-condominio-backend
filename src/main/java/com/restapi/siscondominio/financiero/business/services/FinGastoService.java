@@ -1,13 +1,16 @@
 package com.restapi.siscondominio.financiero.business.services;
 
+import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.financiero.business.dto.FinGastoDTO;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoQueryVO;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoVO;
+import com.restapi.siscondominio.financiero.persistence.documents.pagoIncidenciasDocuments;
 import com.restapi.siscondominio.financiero.persistence.entities.FinGasto;
 import com.restapi.siscondominio.financiero.persistence.entities.FinIncidencia;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinGastoRepository;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinIncidenciaRepository;
+import com.restapi.siscondominio.financiero.persistence.repositories.FinPagoIncidenciasRespositoryMD;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinTipoServicioRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +31,18 @@ public class FinGastoService {
     private FinIncidenciaRepository finIncidenciaRepository;
     @Autowired
     private FinTipoServicioRepository finTipoServicioRepository;
-
+    @Autowired
+    private FinPagoIncidenciasRespositoryMD finPagoIncidenciasRespositoryMD;
+    @Autowired
+    private CtrUsuarioRepository ctrUsuarioRepository;
+    private String saveImagenRecibo(String imagenBase64,Long idPago){
+       String id="Incidencia"+idPago;
+       this. finPagoIncidenciasRespositoryMD.save(new pagoIncidenciasDocuments(id,imagenBase64));
+       return  id;
+    }
+    private void updateImagenRecibo(String imagenBase64,String idRecibo){
+        this. finPagoIncidenciasRespositoryMD.save(new pagoIncidenciasDocuments(idRecibo,imagenBase64));
+    }
     public Long save(FinGastoVO vO) {
         try{
             FinGasto bean = new FinGasto();
@@ -36,8 +50,15 @@ public class FinGastoService {
             bean.setIncId(finIncidenciaRepository.getById(vO.getIncId()));
             bean.setTseId(finTipoServicioRepository.getById(vO.getTseId()));
             bean.setGasFecha(new Date());
+            bean.setGasRecibo("");
             bean = finGastoRepository.save(bean);
-            return bean.getGasId();
+            Long id= bean.getGasId();
+
+            FinGastoUpdateVO updateVO= new FinGastoUpdateVO();
+            updateVO.setGasRecibo(this.saveImagenRecibo(vO.getGasRecibo(),id));
+            this.update(id,updateVO);
+
+            return id;
         }catch (Exception e){
             return null;
         }
@@ -45,11 +66,21 @@ public class FinGastoService {
     }
 
 
-    public void update(Long id, FinGastoUpdateVO vO) {
+    private void update(Long id, FinGastoUpdateVO vO) {
         try{
             FinGasto bean = requireOne(id);
             BeanUtils.copyProperties(vO, bean);
             finGastoRepository.save(bean);
+        }catch (Exception e){
+
+        }
+
+    }
+
+    public void updateRecibo(Long id, FinGastoUpdateVO vO) {
+        try{
+            FinGasto bean = this.finGastoRepository.getById(id);
+            this.updateImagenRecibo(vO.getGasRecibo(),bean.getGasRecibo());
         }catch (Exception e){
 
         }
@@ -84,6 +115,7 @@ public class FinGastoService {
                     listaPagosPorIncidenciaDTO.add(new FinGastoDTO(
                             pago.getGasId(),
                             pago.getGasCedTesorero(),
+                            this.ctrUsuarioRepository.getById(pago.getGasCedTesorero()).getUsuApellidos()+" "+this.ctrUsuarioRepository.getById(pago.getGasCedTesorero()).getUsuApellidos(),
                             pago.getGasPago(),
                             pago.getGasFecha(),
                             pago.getGasRecibo(),
@@ -112,6 +144,7 @@ public class FinGastoService {
                 listaPagosPorIncidenciaDTO.add(new FinGastoDTO(
                         pago.getGasId(),
                         pago.getGasCedTesorero(),
+                        this.ctrUsuarioRepository.getById(pago.getGasCedTesorero()).getUsuApellidos()+" "+this.ctrUsuarioRepository.getById(pago.getGasCedTesorero()).getUsuApellidos(),
                         pago.getGasPago(),
                         pago.getGasFecha(),
                         pago.getGasRecibo(),

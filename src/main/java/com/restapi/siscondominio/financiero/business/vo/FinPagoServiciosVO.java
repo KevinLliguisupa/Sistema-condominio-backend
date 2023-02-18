@@ -5,7 +5,6 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 @Data
@@ -24,5 +23,6 @@ public class FinPagoServiciosVO implements Serializable {
 
     @NotNull(message = "pseCedTesorero can not null")
     private String pseCedTesorero;
+
 
 }

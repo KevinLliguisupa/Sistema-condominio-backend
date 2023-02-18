@@ -27,15 +27,10 @@ public class FinGastoController {
         return finGastoService.save(vO).toString();
     }
 
-    //@DeleteMapping("/{id}")
-    //public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-    //    finGastoService.delete(id);
-    //}
-
     @PutMapping("/{id}")
     public void update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody FinGastoUpdateVO vO) {
-        finGastoService.update(id, vO);
+        finGastoService.updateRecibo(id, vO);
     }
 
     @GetMapping("/{id}")
