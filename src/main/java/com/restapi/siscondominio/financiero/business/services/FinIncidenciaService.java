@@ -91,7 +91,7 @@ public class FinIncidenciaService {
     public void updateIncidentNoSolution(Long id, FinIncidenciaUpdateVO vO) {
         try{
             FinIncidencia bean = requireOne(id);
-            BeanUtils.copyProperties(vO, bean);
+            bean.setIncDescripcion(vO.getIncDescripcion());
             bean.setIncEvidenciaIndicencia(this.finIncidenciaRepository.getById(id).getIncEvidenciaIndicencia());
             finIncidenciaRepository.save(bean);
             this.updateEvidenciaIncidencia(vO.getIncEvidenciaIndicencia(),this.finIncidenciaRepository.getById(id).getIncEvidenciaIndicencia());
@@ -105,7 +105,6 @@ public class FinIncidenciaService {
     public void updateIndicenSolution(Long id, FinIncidenciaSolucionadaUpdateVO vO) {
         try{
             FinIncidencia bean = requireOne(id);
-            BeanUtils.copyProperties(vO, bean);
             bean.setIncEvidenciaSolucion(this.finIncidenciaRepository.getById(id).getIncEvidenciaSolucion());
             finIncidenciaRepository.save(bean);
             this.updateEvidenciaSolucion(vO.getIncEvidenciaSolucion(),this.finIncidenciaRepository.getById(id).getIncEvidenciaSolucion());
