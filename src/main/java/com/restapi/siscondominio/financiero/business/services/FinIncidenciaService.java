@@ -118,7 +118,6 @@ public class FinIncidenciaService {
     public void solution(Long id, FinIncidenciaSolucionarVO vO){
         try{
             FinIncidencia bean = requireOne(id);
-            BeanUtils.copyProperties(vO, bean);
             bean.setIncEvidenciaSolucion(this.saveEvidenciaSolucion((vO.getIncEvidenciaSolucion()),id));
             bean.setIncFechaSolucion(new Date());
             bean.setIncSolucionada(true);
