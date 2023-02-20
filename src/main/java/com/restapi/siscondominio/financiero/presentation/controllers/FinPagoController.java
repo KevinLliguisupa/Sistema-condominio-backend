@@ -65,6 +65,34 @@ public class FinPagoController {
     public FinPagoDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
         return finPagoService.getById(id);
     }
+
+
+    @GetMapping("/recibos")
+    public ResponseEntity<Object> getAllRecibos(
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getAllRecibos(size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getAllRecibos());
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/recibos/{id}")
+    public ResponseEntity<Object> getReciboById(@Valid @NotNull @PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getReciboByPago(id));
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 }
 
 

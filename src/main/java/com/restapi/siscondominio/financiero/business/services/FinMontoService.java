@@ -27,13 +27,13 @@ public class FinMontoService extends Servicio<FinMonto, FinMontoDTO> {
     private FinMontoRepository finMontoRepository;
 
     public Page<FinMontoDTO> getAll(@NotNull Integer size, Integer page) {
-        Sort sorter = Sort.by("monFechaAsignacion").descending();
+        Sort sorter = Sort.by("monFechaFin").descending();
         return toPageDTO(finMontoRepository.findAll(PageRequest.of(page, size, sorter)));
 
     }
 
     public List<FinMontoDTO> getAll() {
-        Sort sorter = Sort.by("monFechaAsignacion").descending();
+        Sort sorter = Sort.by("monFechaFin").descending();
         return toListDTO(finMontoRepository.findAll(sorter));
     }
 

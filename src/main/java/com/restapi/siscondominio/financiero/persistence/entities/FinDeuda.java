@@ -30,7 +30,7 @@ public class FinDeuda implements Serializable {
     private BigDecimal deuSaldo;
 
     @Column(name = "deu_cancelado", nullable = false)
-    private Boolean deuCancelado = false;
+    private Boolean deuCancelado;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "mon_id", nullable = false)

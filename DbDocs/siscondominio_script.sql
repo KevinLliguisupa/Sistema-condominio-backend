@@ -499,6 +499,30 @@ CREATE VIEW fin_recibo as
 		dep.pag_id=pag.pag_id;
 
 
+CREATE VIEW fin_recibo_cabecera as
+SELECT
+	pag.pag_id,
+	usu.usu_cedula,
+	usu.usu_apellidos,
+	usu.usu_nombres,
+	usu.usu_correo,
+	pag.pag_fecha,
+	pag.pag_valor,
+	pag.ced_tesorero
+FROM
+	fin_pago pag,
+	fin_deuda_pago dep,
+	fin_deuda deu,
+	ctr_usuario usu
+WHERE
+	pag.pag_id = dep.pag_id
+	AND dep.deu_id = deu.deu_id
+	AND deu.usu_cedula = usu.usu_cedula
+GROUP BY
+	pag.pag_id,
+	usu.usu_cedula
+ORDER BY
+	pag.pag_id;
 
 
 CREATE OR REPLACE FUNCTION finalizar_monto()

@@ -108,7 +108,7 @@ public class CtrReservacionService {
             }
             Optional<CtrReservacion> reservacionPrevias = ctrReservacionRepository.findByLugAndResFechaAndResHoraInicioAndResHoraFin(lugar, reservacionVO.getResFecha(), reservacionVO.getResHoraInicio(), reservacionVO.getResHoraFin());
             if (reservacionPrevias.isPresent()) {
-                throw new IllegalArgumentException("El lugar ya se encutra reservado");
+                throw new IllegalArgumentException("El lugar ya se encuentra reservado");
             }
 
 
