@@ -5,6 +5,7 @@ import com.restapi.siscondominio.financiero.business.services.FinGastoService;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoQueryVO;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinGastoVO;
+import com.restapi.siscondominio.financiero.persistence.documents.pagoIncidenciasDocuments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -47,4 +48,10 @@ public class FinGastoController {
     public List<FinGastoDTO> query() {
         return finGastoService.query();
     }
+
+    @GetMapping("/recibos")
+    public List<pagoIncidenciasDocuments> getAllRecibos() {
+        return finGastoService.getAllRecibos();
+    }
+
 }

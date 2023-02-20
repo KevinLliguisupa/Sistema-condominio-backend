@@ -170,4 +170,7 @@ public class FinGastoService {
            return null;
         }
         }
+    public List <pagoIncidenciasDocuments> getAllRecibos(){
+        return  this.finPagoIncidenciasRespositoryMD.findAll();
+    }
 }
