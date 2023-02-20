@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface CtrReservacionRepository extends JpaRepository<CtrReservacion, Long>, JpaSpecificationExecutor<CtrReservacion> {
     Optional<CtrReservacion> findByLugAndResFechaAndResHoraInicioAndResHoraFin(CtrLugar lug, LocalDate resFecha, LocalTime resHoraInicio, LocalTime resHoraFin);
+
     List<CtrReservacion> findAllByResFechaGreaterThanEqualOrderByResFechaDesc(LocalDate resFecha);
 
     List<CtrReservacion> findByLugAndResFecha(CtrLugar lug, LocalDate resFecha);

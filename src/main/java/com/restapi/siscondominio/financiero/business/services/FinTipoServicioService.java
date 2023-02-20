@@ -1,16 +1,14 @@
 package com.restapi.siscondominio.financiero.business.services;
-
 import com.restapi.siscondominio.financiero.business.dto.FinTipoServicioDTO;
-import com.restapi.siscondominio.financiero.business.vo.FinTipoServicioQueryVO;
 import com.restapi.siscondominio.financiero.business.vo.FinTipoServicioUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinTipoServicioVO;
-import com.restapi.siscondominio.financiero.persistence.entities.FinTipoServicio;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinTipoServicioRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
+import com.restapi.siscondominio.financiero.persistence.entities.FinTipoServicio;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -20,39 +18,68 @@ public class FinTipoServicioService {
     private FinTipoServicioRepository finTipoServicioRepository;
 
     public Long save(FinTipoServicioVO vO) {
-        FinTipoServicio bean = new FinTipoServicio();
-        BeanUtils.copyProperties(vO, bean);
-        bean = finTipoServicioRepository.save(bean);
-        return bean.getTseId();
-    }
+        try {
+            FinTipoServicio bean = new FinTipoServicio();
+            BeanUtils.copyProperties(vO, bean);
+            bean = finTipoServicioRepository.save(bean);
+            return bean.getTseId();
+        }catch (Exception e){
+            return null;
+        }
 
-    public void delete(Long id) {
-        finTipoServicioRepository.deleteById(id);
     }
 
     public void update(Long id, FinTipoServicioUpdateVO vO) {
-        FinTipoServicio bean = requireOne(id);
-        BeanUtils.copyProperties(vO, bean);
-        finTipoServicioRepository.save(bean);
+        try {
+            FinTipoServicio bean = requireOne(id);
+            BeanUtils.copyProperties(vO, bean);
+            finTipoServicioRepository.save(bean);
+        }catch (Exception e){
+
+        }
+
     }
 
     public FinTipoServicioDTO getById(Long id) {
-        FinTipoServicio original = requireOne(id);
-        return toDTO(original);
+        try {
+            FinTipoServicio original = requireOne(id);
+            return toDTO(original);
+        }catch (Exception e){
+            return null;
+        }
+
     }
 
-    public Page<FinTipoServicioDTO> query(FinTipoServicioQueryVO vO) {
-        throw new UnsupportedOperationException();
+    public List<FinTipoServicioDTO> query() {
+       try{
+           List<FinTipoServicio> listaTiposServicios= finTipoServicioRepository.findAll();
+           List<FinTipoServicioDTO> listaTiposServiciosDTO= new ArrayList<FinTipoServicioDTO>();
+
+           for(FinTipoServicio tipoServicio:listaTiposServicios ){
+               listaTiposServiciosDTO.add(new FinTipoServicioDTO(tipoServicio.getTseId(), tipoServicio.getTseNombre(), tipoServicio.getTseDescripcion(), tipoServicio.getTseIncidencia()));
+           }
+           return listaTiposServiciosDTO;
+       }catch (Exception e){
+           return null;
+       }
     }
 
     private FinTipoServicioDTO toDTO(FinTipoServicio original) {
-        FinTipoServicioDTO bean = new FinTipoServicioDTO();
-        BeanUtils.copyProperties(original, bean);
-        return bean;
+        try{
+            FinTipoServicioDTO bean = new FinTipoServicioDTO();
+            BeanUtils.copyProperties(original, bean);
+            return bean;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     private FinTipoServicio requireOne(Long id) {
-        return finTipoServicioRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+        try{
+            return finTipoServicioRepository.findById(id)
+                    .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
+        }catch (Exception e){
+            return null;
+        }
     }
 }

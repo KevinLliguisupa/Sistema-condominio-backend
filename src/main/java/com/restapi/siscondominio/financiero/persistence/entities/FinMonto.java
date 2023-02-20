@@ -30,9 +30,9 @@ public class FinMonto implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tde_id", nullable = false)
-    private FinTipoDeuda tde;
+    private FinTipoDeuda tipoDeuda;
 
-    @OneToMany(mappedBy = "mon")
+    @OneToMany(mappedBy = "monto")
     private Set<FinDeuda> finDeudas = new LinkedHashSet<>();
 
 }

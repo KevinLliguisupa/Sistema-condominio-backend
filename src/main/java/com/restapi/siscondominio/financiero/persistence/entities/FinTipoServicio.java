@@ -25,8 +25,14 @@ public class FinTipoServicio {
     @NotNull
     @Column(name = "tse_descripcion", nullable = false)
     private String tseDescripcion;
+    @NotNull
+    @Column(name = "tse_incidencia", nullable = false)
+    private Boolean tseIncidencia;
 
-    @OneToMany(mappedBy = "tse")
+    @OneToMany(mappedBy = "tseId")
     private Set<FinGasto> finGastos = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "tseId")
+    private Set<FinPagoServicios> finPagoServicios = new LinkedHashSet<>();
+
 
 }

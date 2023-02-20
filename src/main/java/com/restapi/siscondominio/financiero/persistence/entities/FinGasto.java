@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -21,12 +21,12 @@ public class FinGasto {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tse_id", nullable = false)
-    private FinTipoServicio tse;
+    private FinTipoServicio tseId;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "inc_id", nullable = false)
-    private FinIncidencia inc;
+    private FinIncidencia incId;
 
     @NotNull
     @Column(name = "gas_ced_tesorero", nullable = false)
@@ -38,7 +38,7 @@ public class FinGasto {
 
     @NotNull
     @Column(name = "gas_fecha", nullable = false)
-    private LocalDate gasFecha;
+    private Date gasFecha;
 
     @NotNull
     @Column(name = "gas_recibo", nullable = false)

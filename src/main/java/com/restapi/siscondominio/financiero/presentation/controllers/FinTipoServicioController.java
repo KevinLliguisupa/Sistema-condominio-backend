@@ -7,11 +7,14 @@ import com.restapi.siscondominio.financiero.business.vo.FinTipoServicioUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinTipoServicioVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Validated
 @RestController
@@ -22,28 +25,50 @@ public class FinTipoServicioController {
     private FinTipoServicioService finTipoServicioService;
 
     @PostMapping
-    public String save(@Valid @RequestBody FinTipoServicioVO vO) {
-        return finTipoServicioService.save(vO).toString();
-    }
+    public ResponseEntity<String> save(@Valid @RequestBody FinTipoServicioVO vO) {
+        try{
+            String response=finTipoServicioService.save(vO).toString();
+            if(response!=null){
+                return new ResponseEntity<String>(response, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<String>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }catch (Exception e){
+            String response=null;
+            return new ResponseEntity<String>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-    @DeleteMapping("/{id}")
-    public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-        finTipoServicioService.delete(id);
+
     }
 
     @PutMapping("/{id}")
-    public void update(@Valid @NotNull @PathVariable("id") Long id,
+    public ResponseEntity update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody FinTipoServicioUpdateVO vO) {
-        finTipoServicioService.update(id, vO);
+
+        try{
+            finTipoServicioService.update(id, vO);
+            return new ResponseEntity(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping("/{id}")
-    public FinTipoServicioDTO getById(@Valid @NotNull @PathVariable("id") Long id) {
-        return finTipoServicioService.getById(id);
+    public ResponseEntity<FinTipoServicioDTO> getById(@Valid @NotNull @PathVariable("id") Long id) {
+        try {
+            FinTipoServicioDTO finTipoServicioDTO= finTipoServicioService.getById(id);
+            return new ResponseEntity<FinTipoServicioDTO>(finTipoServicioDTO, HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<FinTipoServicioDTO>(new FinTipoServicioDTO(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping
-    public Page<FinTipoServicioDTO> query(@Valid FinTipoServicioQueryVO vO) {
-        return finTipoServicioService.query(vO);
+    public List<FinTipoServicioDTO> query(@Valid FinTipoServicioQueryVO vO) {
+        return finTipoServicioService.query();
     }
+
 }
+

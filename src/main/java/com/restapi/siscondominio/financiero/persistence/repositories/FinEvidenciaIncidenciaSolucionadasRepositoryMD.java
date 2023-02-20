@@ -1,0 +1,6 @@
+package com.restapi.siscondominio.financiero.persistence.repositories;
+import com.restapi.siscondominio.financiero.persistence.documents.evidenciaIncidenciaSolucionadaDocuments;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface FinEvidenciaIncidenciaSolucionadasRepositoryMD extends MongoRepository<evidenciaIncidenciaSolucionadaDocuments,String> {
+}

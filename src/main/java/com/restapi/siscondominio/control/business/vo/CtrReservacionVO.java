@@ -4,11 +4,10 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Date;
 
 
 @Data
@@ -29,8 +28,6 @@ public class CtrReservacionVO implements Serializable {
 
     @NotNull(message = "resHoraFin can not null")
     private LocalTime resHoraFin;
-
-
 
 
 }
