@@ -26,7 +26,7 @@ public class CtrAnuncioDTO implements Serializable {
 
     private Boolean ancEstado;
 
-    private Long tanId;
+    private CtrTipoAnuncioDTO tanId;
 
     public CtrAnuncioDTO() {
     }

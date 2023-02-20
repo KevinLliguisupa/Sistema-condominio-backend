@@ -2,6 +2,7 @@ package com.restapi.siscondominio.control.business.services;
 
 import com.restapi.siscondominio.control.business.dto.CtrAnuncioDTO;
 import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
+import com.restapi.siscondominio.control.business.dto.CtrTipoAnuncioDTO;
 import com.restapi.siscondominio.control.business.vo.CtrAnuncioQueryVO;
 import com.restapi.siscondominio.control.business.vo.CtrAnuncioUpdateVO;
 import com.restapi.siscondominio.control.business.vo.CtrAnuncioVO;
@@ -81,8 +82,21 @@ public class CtrAnuncioService {
         anuncioDTO.setAncFechaPublicacion(anuncio.getAncFechaPublicacion());
         anuncioDTO.setAncPrioridad(anuncio.getAncPrioridad());
         anuncioDTO.setAncEstado(anuncio.getAncEstado());
-        anuncioDTO.setTanId(anuncio.getTan().getTanId());
+        anuncioDTO.setTanId(toTipoAnuncioDTO(anuncio.getTan()));
+
+
+
         return anuncioDTO;
+    }
+    private CtrTipoAnuncioDTO toTipoAnuncioDTO(CtrTipoAnuncio original) {
+        CtrTipoAnuncioDTO bean = null;
+        try {
+            bean = new CtrTipoAnuncioDTO();
+            BeanUtils.copyProperties(original, bean);
+        } catch (Exception e) {
+            System.out.println("Fallo conversion de Entidad a DTO: " + e);
+        }
+        return bean;
     }
     public CtrAnuncioDTO guardarAnuncio(CtrAnuncioVO anuncioVO, String cedula, Long tan) {
         LocalDate fechaActual = LocalDate.now();

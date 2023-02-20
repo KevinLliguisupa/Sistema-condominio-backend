@@ -18,6 +18,6 @@ public class CtrReunionDTO implements Serializable {
 
     private Boolean reuEstado;
 
-    private Long lugId;
+    private CtrLugarDTO lugId;
 
 }

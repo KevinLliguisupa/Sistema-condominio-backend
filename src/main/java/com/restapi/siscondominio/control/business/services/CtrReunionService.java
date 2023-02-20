@@ -1,6 +1,7 @@
 package com.restapi.siscondominio.control.business.services;
 
 import com.restapi.siscondominio.control.business.dto.CtrAnuncioDTO;
+import com.restapi.siscondominio.control.business.dto.CtrLugarDTO;
 import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
 import com.restapi.siscondominio.control.business.vo.*;
 import com.restapi.siscondominio.control.persistence.entities.*;
@@ -70,8 +71,18 @@ public class CtrReunionService {
         reunionDTO.setUsuCedula(ctrReunion.getUsuCedula().getUsuCedula());
         reunionDTO.setReuFecha(ctrReunion.getReuFecha());
         reunionDTO.setReuEstado(ctrReunion.getReuEstado());
-        reunionDTO.setLugId(ctrReunion.getLug().getLugId());
+        reunionDTO.setLugId(toLugarDTO(ctrReunion.getLug()));
         return reunionDTO;
+    }
+    private CtrLugarDTO toLugarDTO(CtrLugar original) {
+        CtrLugarDTO bean = null;
+        try {
+            bean = new CtrLugarDTO();
+            BeanUtils.copyProperties(original, bean);
+        } catch (Exception e) {
+            System.out.println("Fallo conversion de Entidad a DTO: " + e);
+        }
+        return bean;
     }
 
     //Guardar Reunion

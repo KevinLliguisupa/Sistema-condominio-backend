@@ -1,6 +1,7 @@
 package com.restapi.siscondominio.control.business.services;
 
 import com.restapi.siscondominio.control.business.dto.CtrAnuncioDTO;
+import com.restapi.siscondominio.control.business.dto.CtrLugarDTO;
 import com.restapi.siscondominio.control.business.dto.CtrReservacionDTO;
 import com.restapi.siscondominio.control.business.dto.CtrReunionDTO;
 import com.restapi.siscondominio.control.business.vo.*;
@@ -65,10 +66,10 @@ public class CtrReservacionService {
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
     }
 
-    private CtrReservacionDTO toReservacionDTO(CtrReservacion reservacion){
+    private CtrReservacionDTO toReservacionDTO(CtrReservacion reservacion) {
         CtrReservacionDTO reservacionDTO = new CtrReservacionDTO();
         reservacionDTO.setResId(reservacion.getResId());
-        reservacionDTO.setLugId(reservacion.getLug().getLugId());
+        reservacionDTO.setLugId(toLugarDTO(reservacion.getLug()));
         reservacionDTO.setUsuCedula(reservacion.getUsuCedula().getUsuCedula());
         reservacionDTO.setResFecha(reservacion.getResFecha());
         reservacionDTO.setResHoraInicio(reservacion.getResHoraInicio());
@@ -76,6 +77,17 @@ public class CtrReservacionService {
         reservacionDTO.setResAprobado(reservacion.getResAprobado());
         reservacionDTO.setResActiva(reservacion.getResActiva());
         return reservacionDTO;
+    }
+
+    private CtrLugarDTO toLugarDTO(CtrLugar original) {
+        CtrLugarDTO bean = null;
+        try {
+            bean = new CtrLugarDTO();
+            BeanUtils.copyProperties(original, bean);
+        } catch (Exception e) {
+            System.out.println("Fallo conversion de Entidad a DTO: " + e);
+        }
+        return bean;
     }
 
     //Guardar Reservaciones
