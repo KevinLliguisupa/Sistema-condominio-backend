@@ -3,14 +3,14 @@ package com.restapi.siscondominio.financiero.business.services;
 import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.financiero.business.dto.FinPagoServiciosDTO;
-import com.restapi.siscondominio.financiero.business.vo.FinPagoServiciosQueryVO;
 import com.restapi.siscondominio.financiero.business.vo.FinPagoServiciosUpdateVO;
 import com.restapi.siscondominio.financiero.business.vo.FinPagoServiciosVO;
+import com.restapi.siscondominio.financiero.persistence.documents.pagoServiciosDocuments;
 import com.restapi.siscondominio.financiero.persistence.entities.FinPagoServicios;
+import com.restapi.siscondominio.financiero.persistence.repositories.FinPagoServiciosRespositoryMD;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinPagoServiciosRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,13 +22,33 @@ public class FinPagoServiciosService {
     private FinPagoServiciosRepository finPagoServiciosRepository;
     @Autowired
     private CtrUsuarioRepository ctrUsuarioRepository;
+    @Autowired
+    private FinPagoServiciosRespositoryMD finPagoServiciosRespositoryMD;
+
+    private String saveImage(String imagenBase64,Long idPago, Long idServicio) {
+        String id="Servicio_"+idPago+"_"+idServicio;
+        finPagoServiciosRespositoryMD.save(new pagoServiciosDocuments(id,imagenBase64));
+        return id;
+    }
+
+    public List<pagoServiciosDocuments> getAllImagenesPagos(){
+        return  this.finPagoServiciosRespositoryMD.findAll();
+    }
 
     public Long save(FinPagoServiciosVO vO) {
         FinPagoServicios bean = new FinPagoServicios();
-        BeanUtils.copyProperties(vO, bean);
+        bean.setTseId(vO.getTseId());
+        bean.setPseMonto(vO.getPseMonto());
+        bean.setPseRecibo("");
         bean.setPseFechaPago(new Date());
+        bean.setPseCedTesorero(vO.getPseCedTesorero());
         bean = finPagoServiciosRepository.save(bean);
-        return bean.getPseId();
+        Long id = bean.getPseId();
+
+        FinPagoServiciosUpdateVO updateVO= new FinPagoServiciosUpdateVO();
+        updateVO.setPseRecibo(this.saveImage(vO.getPseRecibo(),id, vO.getTseId()));
+        this.update(id,updateVO);
+        return  id;
     }
 
 
@@ -36,6 +56,12 @@ public class FinPagoServiciosService {
         FinPagoServicios bean = requireOne(id);
         BeanUtils.copyProperties(vO, bean);
         finPagoServiciosRepository.save(bean);
+    }
+
+    public void updateImagen(String id, FinPagoServiciosUpdateVO vO) {
+        pagoServiciosDocuments bean = finPagoServiciosRespositoryMD.findById(id).get();
+        bean.setImagenBinarizada(vO.getPseRecibo());
+        finPagoServiciosRespositoryMD.save(bean);
     }
 
     public FinPagoServiciosDTO getById(Long id) {
@@ -86,4 +112,5 @@ public class FinPagoServiciosService {
         return finPagoServiciosRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
     }
+
 }

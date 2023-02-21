@@ -3,8 +3,9 @@ package com.restapi.siscondominio.financiero.presentation.controllers;
 import com.restapi.siscondominio.financiero.business.dto.FinIncidenciaDTO;
 import com.restapi.siscondominio.financiero.business.services.FinIncidenciaService;
 import com.restapi.siscondominio.financiero.business.vo.*;
+import com.restapi.siscondominio.financiero.persistence.documents.evidenciaIncidenciaSolucionadaDocuments;
+import com.restapi.siscondominio.financiero.persistence.documents.evidenciaIncidenciasNoSolucionadasDocuments;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,15 +26,11 @@ public class FinIncidenciaController {
         return finIncidenciaService.save(vO).toString();
     }
 
-    //@DeleteMapping("/{id}")
-    //public void delete(@Valid @NotNull @PathVariable("id") Long id) {
-    //    finIncidenciaService.delete(id);
-    //}
 
     @PutMapping("/{id}")
     public void update(@Valid @NotNull @PathVariable("id") Long id,
                        @Valid @RequestBody FinIncidenciaUpdateVO vO) {
-        finIncidenciaService.update(id, vO);
+        finIncidenciaService.updateIncidentNoSolution(id, vO);
     }
 
     @PutMapping("/solucion/{id}")
@@ -66,4 +63,16 @@ public class FinIncidenciaController {
     public List<FinIncidenciaDTO> incidentsNotFixed() {
         return finIncidenciaService.incidentsNotFixed();
     }
+
+    @GetMapping("evidenciasnosolucionadas")
+    public List<evidenciaIncidenciasNoSolucionadasDocuments>getAllEvidenciasNoSolucionadas () {
+        return this.finIncidenciaService.getAllEvidenciasNoSolucionadas();
+    }
+
+    @GetMapping("evidenciassolucionadas")
+    public List<evidenciaIncidenciaSolucionadaDocuments>getAllEvidenciasSolucionadas () {
+        return this.finIncidenciaService.getAllEvidenciasSolucionadas();
+    }
+
+
 }

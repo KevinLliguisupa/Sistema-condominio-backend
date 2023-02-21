@@ -10,7 +10,7 @@ import java.util.Date;
 public class FinIncidenciaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public FinIncidenciaDTO(Long incId, String usuCedula, Date incFechaReporte, String incDescripcion, String incEvidenciaIndicencia, Boolean incSolucionada, Date incFechaSolucion, String incEvidenciaSolucion) {
+    public FinIncidenciaDTO(Long incId, String usuCedula, String usuNombre,Date incFechaReporte, String incDescripcion, String incEvidenciaIndicencia, Boolean incSolucionada, Date incFechaSolucion, String incEvidenciaSolucion) {
         this.incId = incId;
         this.usuCedula = usuCedula;
         this.incFechaReporte = incFechaReporte;
@@ -19,6 +19,7 @@ public class FinIncidenciaDTO implements Serializable {
         this.incSolucionada = incSolucionada;
         this.incFechaSolucion = incFechaSolucion;
         this.incEvidenciaSolucion = incEvidenciaSolucion;
+        this.usuNombre=usuNombre;
     }
     public FinIncidenciaDTO() {
 
@@ -27,6 +28,7 @@ public class FinIncidenciaDTO implements Serializable {
     private Long incId;
 
     private String usuCedula;
+    private  String usuNombre;
 
     private Date incFechaReporte;
 
@@ -39,5 +41,6 @@ public class FinIncidenciaDTO implements Serializable {
     private Date incFechaSolucion;
 
     private String incEvidenciaSolucion;
+
 
 }
