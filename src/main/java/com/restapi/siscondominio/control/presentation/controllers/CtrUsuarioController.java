@@ -60,13 +60,13 @@ public class CtrUsuarioController {
     //  ctrUsuarioService.delete(id);
     //}
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@Valid @NotNull @PathVariable("id") String id,
+    @PutMapping()
+    public ResponseEntity<Object> update(
                        @Valid @RequestBody CtrUsuarioUpdateVO vO) {
         try {
 
             return ResponseHandler.generateResponse("Parametros actualizado",
-                    HttpStatus.CREATED, ctrUsuarioService.update(id, vO)) ;
+                    HttpStatus.CREATED, ctrUsuarioService.actualizarUsuario(vO)) ;
         }catch (Exception e){
             return ResponseHandler.generateResponse("¡Error no fue posible actualizar el recurso!",
                     HttpStatus.INTERNAL_SERVER_ERROR) ;
@@ -76,7 +76,6 @@ public class CtrUsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@Valid @NotNull @PathVariable("id") String id) {
         try{
-
             return ResponseHandler.generateResponse("Encontrado  "+id,
                     HttpStatus.CREATED,ctrUsuarioService.getById(id));
         }catch (Exception e){

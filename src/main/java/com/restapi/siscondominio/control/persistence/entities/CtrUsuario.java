@@ -39,6 +39,9 @@ public class CtrUsuario implements Serializable {
     @Column(name = "usu_estado", nullable = false)
     private Boolean usuEstado = false;
 
+    @Column(name = "usu_rol", nullable = false)
+    private String usuRol;
+
     @OneToMany(mappedBy = "usuCedula")
     private Set<CtrReunion> ctrReunions = new LinkedHashSet<>();
 

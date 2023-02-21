@@ -10,6 +10,7 @@ import com.restapi.siscondominio.control.persistence.entities.CtrUsuario;
 import com.restapi.siscondominio.control.persistence.repositories.CtrCasaRepository;
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
 import com.restapi.siscondominio.control.presentation.utils.encryptionUtility;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -29,7 +30,7 @@ public class CtrUsuarioService {
     @Autowired
     private CtrCasaRepository ctrCasaRepository;
 
-    public CtrUsuarioInfoDTO save(CtrUsuarioVO vO) {
+    public CtrUsuarioInfoDTO save(@NotNull CtrUsuarioVO vO) {
         CtrUsuario existingUser = requireOneByEmail(vO.getUsuCorreo());
         System.out.println(existingUser);
         if (existingUser != null) {
@@ -39,6 +40,7 @@ public class CtrUsuarioService {
         CtrUsuario bean = new CtrUsuario();
         BeanUtils.copyProperties(vO, bean);
         bean.setUsuEstado(true);
+        bean.setUsuRol("Inquilino");
         bean = ctrUsuarioRepository.save(bean);
         return toUserInfoDto(bean);
     }

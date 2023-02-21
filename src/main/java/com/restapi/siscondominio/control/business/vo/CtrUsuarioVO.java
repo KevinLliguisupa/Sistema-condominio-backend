@@ -25,6 +25,7 @@ public class CtrUsuarioVO implements Serializable {
     @NotNull(message = "usuTelefono can not null")
     private String usuTelefono;
 
+
     @NotNull(message = "usuClave can not null")
     private String usuClave;
 

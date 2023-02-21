@@ -18,6 +18,8 @@ public class CtrUsuarioInfoDTO implements Serializable {
 
     private String usuTelefono;
 
+    private String usuRol;
+
     private Boolean usuEstado;
 
 }

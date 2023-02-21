@@ -28,6 +28,10 @@ public class UserDetailsImpl implements UserDetails {
         return usuario.getUsuCedula();
     }
 
+    public String getRol() {
+        return usuario.getUsuRol();
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
