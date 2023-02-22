@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 
 @Validated
@@ -26,15 +27,14 @@ public class CtrReservacionController {
 
     @PostMapping
     public ResponseEntity<Object> save(@Valid @RequestBody CtrReservacionVO reservacionVO){
-
         try {
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(ctrReservacionService.guardarReservacion(reservacionVO, reservacionVO.getUsuCedula(), reservacionVO.getLugId()));
-
+            CtrReservacionDTO reservacionDTO = ctrReservacionService.guardarReservacion(reservacionVO, reservacionVO.getUsuCedula(), reservacionVO.getLugId());
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservacionDTO);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear la reservación: "+ e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{put("message", "Error al crear la reservación: " + e.getMessage());}});
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@Valid @NotNull @PathVariable("id") Long id) {
@@ -47,28 +47,26 @@ public class CtrReservacionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @NotNull @PathVariable("id") Long id) {
+    public ResponseEntity<Object> update(@Valid @NotNull @PathVariable("id") Long id) {
         try{
             ctrReservacionService.actualizarReserEstado(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Reservación Aprobada");
+            return ResponseEntity.status(HttpStatus.OK).body(new HashMap<String, String>() {{put("message", "Reservación Aprobada");}});
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al aprobar la reservación: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{put("message", "Error al aprobar la reservación: " + e.getMessage());}});
         }
-
     }
+
 
     @PutMapping
-    public ResponseEntity<Object> actualizarReservacion( @RequestBody CtrReservacionUpdateVO reservacionUpdateVO) {
-
+    public ResponseEntity<Object> actualizarReservacion(@RequestBody CtrReservacionUpdateVO reservacionUpdateVO) {
         try {
-
             CtrReservacionDTO reservacionDTO = ctrReservacionService.actualizarReservacion(reservacionUpdateVO.getResId(), reservacionUpdateVO, reservacionUpdateVO.getLugId());
             return ResponseEntity.ok().body(reservacionDTO);
-
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{put("message", "Error al actualizar la reservación: " + e.getMessage());}});
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@Valid @NotNull @PathVariable("id") Long id) {
@@ -91,14 +89,15 @@ public class CtrReservacionController {
     }
 
     @PutMapping("/estado/{id}")
-    public ResponseEntity<?> EliminarReservacionLog(@Valid @NotNull @PathVariable("id") Long id) {
+    public ResponseEntity<Object> EliminarReservacionLog(@Valid @NotNull @PathVariable("id") Long id) {
         try {
             ctrReservacionService.EliminarReserEstado(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Reservación eliminado correctamente");
+            return ResponseEntity.ok().body(new HashMap() {{ put("message", "Reservación eliminada con éxito"); }});
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la reservación: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{ put("message", "Error al eliminar la reservación: " + e.getMessage()); }});
         }
     }
+
 
 
 
