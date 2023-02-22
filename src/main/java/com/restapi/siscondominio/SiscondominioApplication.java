@@ -27,7 +27,6 @@ public class SiscondominioApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/login")
-								.allowedOrigins("/**")
 										.allowedMethods("*")
 												.exposedHeaders("*");
 
