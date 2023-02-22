@@ -520,9 +520,7 @@ WHERE
 	AND deu.usu_cedula = usu.usu_cedula
 GROUP BY
 	pag.pag_id,
-	usu.usu_cedula
-ORDER BY
-	pag.pag_id;
+	usu.usu_cedula;
 
 
 CREATE OR REPLACE FUNCTION finalizar_monto()

@@ -93,6 +93,23 @@ public class FinPagoController {
                     HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/recibos/usuario/{cedula}")
+    public ResponseEntity<Object> getRecibosByUsuario(@Valid @NotNull @PathVariable("cedula") String cedula,
+            @RequestParam(required = false, defaultValue = "false") Boolean pagination,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false, defaultValue = "0") Integer page) {
+        try {
+            if (pagination) {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getRecibosByUsuario(cedula, size, page));
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(finPagoService.getRecibosByUsuario(cedula));
+            }
+        } catch (Exception e) {
+            return ResponseHandler.generateResponse("¡Información no encontrada!",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
 }
 
 

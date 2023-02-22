@@ -56,13 +56,27 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
     }
 
     public Page<FinReciboCabecera> getAllRecibos(@NotNull Integer size, Integer page) {
-        Sort sorter = Sort.by("pagFecha").descending();
+        Sort sorter = Sort.by("pagId").descending();
         return finReciboCabeceraRepository.findAll(PageRequest.of(page, size, sorter));
     }
 
     public List<FinReciboCabecera> getAllRecibos() {
-        Sort sorter = Sort.by("pagFecha").descending();
+        Sort sorter = Sort.by("pagId").descending();
         return finReciboCabeceraRepository.findAll(sorter);
+    }
+
+    public Page<FinReciboCabecera> getRecibosByUsuario(@NotNull String cedulaUsuario, Integer size, Integer page) {
+        Sort sorter = Sort.by("pagId").descending();
+        Specification<FinReciboCabecera> hasUser = Specification.where(FinReciboSpecification.hasUser(cedulaUsuario));
+
+        return finReciboCabeceraRepository.findAll(hasUser, PageRequest.of(page, size, sorter));
+    }
+
+    public List<FinReciboCabecera> getRecibosByUsuario(@NotNull String cedulaUsuario) {
+        Sort sorter = Sort.by("pagId").descending();
+        Specification<FinReciboCabecera> hasUser = Specification.where(FinReciboSpecification.hasUser(cedulaUsuario));
+
+        return finReciboCabeceraRepository.findAll(hasUser, sorter);
     }
 
     public FinPagoDTO getById(Long id) {
