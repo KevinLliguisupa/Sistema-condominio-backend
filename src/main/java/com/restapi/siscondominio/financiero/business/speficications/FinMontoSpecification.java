@@ -11,7 +11,6 @@ public class FinMontoSpecification {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get("monFechaFin")));
     }
 
-    //SELECT WHERE tde_id=? AND mon_fecha_fin IS NULL
     public static Specification<FinMonto> hasTipo(Long tdeId) {
         FinTipoDeuda tipoDeuda = new FinTipoDeuda();
         tipoDeuda.setTdeId(tdeId);

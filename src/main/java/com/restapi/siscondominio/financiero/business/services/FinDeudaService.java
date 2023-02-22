@@ -2,8 +2,11 @@ package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.financiero.business.dto.FinDeudaDTO;
 import com.restapi.siscondominio.financiero.business.dto.FinDeudaInfoDTO;
+import com.restapi.siscondominio.financiero.business.dto.FinMontoDTO;
+import com.restapi.siscondominio.financiero.business.dto.FinTipoDeudaDTO;
 import com.restapi.siscondominio.financiero.business.speficications.FinDeudaSpecification;
 import com.restapi.siscondominio.financiero.persistence.entities.FinDeuda;
+import com.restapi.siscondominio.financiero.persistence.entities.FinTipoDeuda;
 import com.restapi.siscondominio.financiero.persistence.repositories.FinDeudaRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -137,11 +140,13 @@ public class FinDeudaService extends Servicio<FinDeuda, FinDeudaDTO> {
 
         if (deudas.size() != 0 && fechaActual.getDayOfMonth() < 5) {
             map.put("fecha", LocalDate.of(fechaActual.getYear(), fechaActual.getMonth(), 5));
-            map.put("tipoDeuda", "Multa");
+            FinMontoDTO montoProximo = finMontoService.getActivosByTipo(2L);
+            map.put("monto", montoProximo);
 
         } else {
             map.put("fecha", fechaActual.with(TemporalAdjusters.firstDayOfNextMonth()));
-            map.put("tipoDeuda", "Alícuota");
+            FinMontoDTO montoProximo = finMontoService.getActivosByTipo(1L);
+            map.put("monto", montoProximo);
         }
         return map;
     }

@@ -1,20 +1,17 @@
 package com.restapi.siscondominio.financiero.business.services;
 
 import com.restapi.siscondominio.control.persistence.repositories.CtrUsuarioRepository;
-import com.restapi.siscondominio.financiero.business.dto.*;
+import com.restapi.siscondominio.financiero.business.dto.FinPagoDTO;
+import com.restapi.siscondominio.financiero.business.dto.FinReciboCabeceraDTO;
+import com.restapi.siscondominio.financiero.business.dto.FinReciboDTO;
+import com.restapi.siscondominio.financiero.business.dto.RegistroPagosDTO;
 import com.restapi.siscondominio.financiero.business.exceptions.IncorrectValueException;
 import com.restapi.siscondominio.financiero.business.exceptions.ResourceNotFoundException;
 import com.restapi.siscondominio.financiero.business.speficications.FinReciboSpecification;
 import com.restapi.siscondominio.financiero.business.vo.FinPagoComunVO;
 import com.restapi.siscondominio.financiero.business.vo.FinPagoDiferidoVO;
-import com.restapi.siscondominio.financiero.persistence.entities.FinDeuda;
-import com.restapi.siscondominio.financiero.persistence.entities.FinDeudaPago;
-import com.restapi.siscondominio.financiero.persistence.entities.FinPago;
-import com.restapi.siscondominio.financiero.persistence.entities.FinRecibo;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinDeudaPagoRepository;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinDeudaRepository;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinPagoRepository;
-import com.restapi.siscondominio.financiero.persistence.repositories.FinReciboRepository;
+import com.restapi.siscondominio.financiero.persistence.entities.*;
+import com.restapi.siscondominio.financiero.persistence.repositories.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +42,8 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
     private FinDeudaPagoRepository finDeudaPagoRepository;
     @Autowired
     private FinDeudaRepository finDeudaRepository;
+    @Autowired
+    private FinReciboCabeceraRepository finReciboCabeceraRepository;
 
     public Page<FinPagoDTO> getAll(@NotNull Integer size, Integer page) {
         Sort sorter = Sort.by("pagFecha").descending();
@@ -54,6 +53,30 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
     public List<FinPagoDTO> getAll() {
         Sort sorter = Sort.by("pagFecha").descending();
         return toListDTO(finPagoRepository.findAll(sorter));
+    }
+
+    public Page<FinReciboCabecera> getAllRecibos(@NotNull Integer size, Integer page) {
+        Sort sorter = Sort.by("pagId").descending();
+        return finReciboCabeceraRepository.findAll(PageRequest.of(page, size, sorter));
+    }
+
+    public List<FinReciboCabecera> getAllRecibos() {
+        Sort sorter = Sort.by("pagId").descending();
+        return finReciboCabeceraRepository.findAll(sorter);
+    }
+
+    public Page<FinReciboCabecera> getRecibosByUsuario(@NotNull String cedulaUsuario, Integer size, Integer page) {
+        Sort sorter = Sort.by("pagId").descending();
+        Specification<FinReciboCabecera> hasUser = Specification.where(FinReciboSpecification.hasUser(cedulaUsuario));
+
+        return finReciboCabeceraRepository.findAll(hasUser, PageRequest.of(page, size, sorter));
+    }
+
+    public List<FinReciboCabecera> getRecibosByUsuario(@NotNull String cedulaUsuario) {
+        Sort sorter = Sort.by("pagId").descending();
+        Specification<FinReciboCabecera> hasUser = Specification.where(FinReciboSpecification.hasUser(cedulaUsuario));
+
+        return finReciboCabeceraRepository.findAll(hasUser, sorter);
     }
 
     public FinPagoDTO getById(Long id) {
@@ -108,12 +131,12 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
                 .orElseThrow(() -> new ResourceNotFoundException("Deuda no encontrada: "
                         + requestBody.getDeuId()));
         FinPago pagoGuardado;
-        try{
+        try {
             pagoGuardado = finPagoRepository.save(FinPago.builder()
-                            .pagValor(deuda.getDeuSaldo())
-                            .pagFecha(LocalDate.now())
-                            .cedTesorero(requestBody.getCedTesorero())
-                            .build());
+                    .pagValor(deuda.getDeuSaldo())
+                    .pagFecha(LocalDate.now())
+                    .cedTesorero(requestBody.getCedTesorero())
+                    .build());
             guardarDeudaPago(pagoGuardado, deuda, deuda.getDeuSaldo());
 
             deuda.setDeuSaldo(BigDecimal.ZERO);
@@ -121,7 +144,7 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
 
             finDeudaRepository.save(deuda);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("¡Se ha presentado un error inesperado!");
         }
         return getReciboByPago(pagoGuardado.getPagId());
@@ -197,5 +220,4 @@ public class FinPagoService extends Servicio<FinPago, FinPagoDTO> {
         BeanUtils.copyProperties(original, bean);
         return bean;
     }
-
 }

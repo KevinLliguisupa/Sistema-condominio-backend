@@ -67,12 +67,9 @@ public class FinPagoServiceTest {
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
-        usuarioPrueba = CtrUsuario.builder()
-                .usuCedula("0507896547")
-                .usuNombres("Juan Alexis")
-                .usuApellidos("Andrade Perez")
-                .usuEstado(true)
-                .build();
+        usuarioPrueba = new CtrUsuario("0507896547", "Juan Alexis", "Andrade Perez",
+                "jaandradep@gmail.com",null,null, true, null,
+                null, null, null, null, null);
 
         FinDeuda deuda1 = FinDeuda.builder()
                 .usuCedula(usuarioPrueba).deuSaldo(new BigDecimal(110))
