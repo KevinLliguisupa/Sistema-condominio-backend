@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
 
 @Validated
@@ -39,11 +40,12 @@ public class CtrLugarController {
     public ResponseEntity<?> delete(@Valid @NotNull @PathVariable("id") Long id) {
         try {
             ctrLugarService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Lugar eliminado correctamente");
+            return ResponseEntity.ok().body(new HashMap() {{put("message", "Lugar eliminado con éxito");}});
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el lugar: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<String, String>() {{put("error", "Error al eliminar el lugar: " + e.getMessage());}});
         }
     }
+
     @PutMapping
     public ResponseEntity<Object> actualizarLugar( @RequestBody CtrLugarUpdateVO lugarUpdateVO) {
 
